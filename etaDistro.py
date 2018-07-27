@@ -9,6 +9,10 @@ from ROOT import gPad
 from ROOT import TCanvas, TGraph
 from ROOT import gROOT
 from array import array
+from numpy import median
+
+import numpy as np
+from scipy import stats
 
 def is_number(s):
     try:
@@ -21,7 +25,7 @@ def ratesEndcap_list():
   runNumfile = "output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
-  rolls = ["_A","_B","_C", "_D"]
+  rolls = ["_A","_B","_C"] #, "_D"]
   chambers = [
              "01","02","03","04","05","06","07","08","09",
         "10","11","12","13","14","15","16","17","18","19",
@@ -45,7 +49,7 @@ def ratesEndcap_list():
   #print sorted(names)
   return [names, rates]
 
-def ratesWheel_list():
+def ratesWheel_lists():
   runNumfile = "output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
@@ -172,11 +176,14 @@ def average_chambers(wheel, dictionary, X, Y):
           rates = [v["rates"] for k, v in dictionary.items()
                  for c in chambers if k == "W+"+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
           if rates and len(rates) != 1: 
-            X.append( sum(eta)/len(eta) )
-            Y.append( sum(rates)/len(rates) )
+            print max(set(rates), key=rates.count)
+            X.append( max(set(eta), key=eta.count)     )
+            Y.append( max(set(rates), key=rates.count) )
+            #  X.append( median(eta)   )  #sum(eta)/len(eta) )
+            #  Y.append( median(rates) )  #sum(rates)/len(rates) )
 
   elif wheel == 0:
-    rolls = ["_A","_B","_C", "_D"]
+    rolls = ["_A","_B","_C"] #, "_D"]
     chambers = [
                "01","02","03","04","05","06","07","08","09",
           "10","11","12","13","14","15","16","17","18","19",
@@ -189,8 +196,10 @@ def average_chambers(wheel, dictionary, X, Y):
         eta = [v["eta"] for k, v in dictionary.items() for c in chambers if k == endcapSection+r+"_CH"+c+roll]
         rates = [v["rates"] for k, v in dictionary.items() for c in chambers if k == endcapSection+r+"_CH"+c+roll]
         if rates:# and len(rates) != 1:
-          X.append( sum(eta)/len(eta) )
-          Y.append( sum(rates)/len(rates) )
+          X.append( max(set(eta), key=eta.count)     )
+          Y.append( max(set(rates), key=rates.count) )
+          #  X.append( median(eta)   )  #sum(eta)/len(eta) )
+          #  Y.append( median(rates) )  #sum(rates)/len(rates) )
 
 def main():
   #if sys.argv[2]: print str(sys.argv[2])
@@ -198,7 +207,7 @@ def main():
   print len(wheelEtaList[0]), len(wheelEtaList[1])
   endcapEtaList = etaEndcap_list() #[names, eta] 
   print len(endcapEtaList[0]), len(endcapEtaList[1])
-  wheelRatesList = ratesWheel_list() #[names, rates]
+  wheelRatesList = ratesWheel_lists() #[names, rates]
   print len(wheelRatesList[0]), len(wheelRatesList[1])
   endcapRatesList = ratesEndcap_list() #[names, rates]
   print len(endcapRatesList[0]), len(endcapRatesList[1])
@@ -244,7 +253,7 @@ def eta_plot(X1,Y1,X2,Y2,X3,Y3,X4,Y4):
   gr1.SetLineWidth( 4 )
   gr1.SetMarkerColor( kOrange )
   gr1.SetMarkerStyle( 21 )
-  gr1.SetTitle( 'Pseudorapidity Distribution for Section' )
+  gr1.SetTitle( 'Layer 1' )
   gr1.GetXaxis().SetTitle( '#Eta' )
   gr1.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   #gr1.Draw("SAME AP")
@@ -256,7 +265,7 @@ def eta_plot(X1,Y1,X2,Y2,X3,Y3,X4,Y4):
   gr2.SetLineWidth( 5 )
   gr2.SetMarkerColor( kBlue )
   gr2.SetMarkerStyle( 22 )
-  gr2.SetTitle( 'Pseudorapidity Distribution for Section') 
+  gr2.SetTitle( 'Layer 2') 
   gr2.GetXaxis().SetTitle( '#Eta' )
   gr2.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   #gr2.Draw("SAME AP")
@@ -268,7 +277,7 @@ def eta_plot(X1,Y1,X2,Y2,X3,Y3,X4,Y4):
   gr3.SetLineWidth( 6 )
   gr3.SetMarkerColor( kRed )
   gr3.SetMarkerStyle( 23 )
-  gr3.SetTitle( 'Pseudorapidity Distribution for Section') 
+  gr3.SetTitle( 'Layer 3' )
   gr3.GetXaxis().SetTitle( '#Eta' )
   gr3.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   #gr3.Draw("SAME AP")
@@ -280,7 +289,7 @@ def eta_plot(X1,Y1,X2,Y2,X3,Y3,X4,Y4):
   gr4.SetLineWidth( 7 )
   gr4.SetMarkerColor( kGreen )
   gr4.SetMarkerStyle( 24 )
-  gr4.SetTitle( 'Pseudorapidity Distribution for Section ')
+  gr4.SetTitle( 'Layer 4' )
   gr4.GetXaxis().SetTitle( '#Eta' )
   gr4.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   #gr4.Draw("SAME")
@@ -295,13 +304,14 @@ def eta_plot(X1,Y1,X2,Y2,X3,Y3,X4,Y4):
   mg.GetXaxis().SetTitle( '#Eta' )
   mg.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
-  legend = TLegend(0.1,0.7,0.48,0.9)
-  legend.SetHeader("The Legend Title","C") #// option "C" allows to center the header
-  legend.AddEntry("gr1","Function abs(#frac{sin(x)}{x})","l")
-  legend.AddEntry("gr2","Graph with error bars","lep")
-  legend.AddEntry("gr3","Graph with error bars","lep")
-  legend.AddEntry("gr4","Graph with error bars","lep")
-  legend.Draw()
+  #legend = TLegend(0.1,0.7,0.48,0.9)
+  #legend.SetHeader("The Legend Title","C") #// option "C" allows to center the header
+  #legend.AddEntry("gr1","Function abs(#frac{sin(x)}{x})","l")
+  #legend.AddEntry("gr2","Graph with error bars","lep")
+  #legend.AddEntry("gr3","Graph with error bars","lep")
+  #legend.AddEntry("gr4","Graph with error bars","lep")
+  canv.BuildLegend(0.1,0.7,0.48,0.9)
+  #legend.Draw()
 
   canv.SaveAs("etaDistro.gif")
 

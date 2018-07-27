@@ -37,9 +37,9 @@ def ratesEndcap_list():
       #rates = []
       for c in chambers:
         try:
-          if float(rates1["rate"]["RE+4"+r+"_CH"+c+roll]["ratesquarecm"]) == 0: continue
-          rates.append(float(rates1["rate"]["RE+4"+r+"_CH"+c+roll]["ratesquarecm"]))
-          names.append("RE+4"+r+"_CH"+c+roll)
+          if float(rates1["rate"]["RE+4"+r+"_CH28"+roll]["ratesquarecm"]) == 0: continue
+          rates.append(float(rates1["rate"]["RE+4"+r+"_CH28"+roll]["ratesquarecm"]))
+          names.append("RE+4"+r+"_CH28"+roll)
         except KeyError:
           continue
 
@@ -60,7 +60,7 @@ def ratesWheel_list():
              "01","02","03","04","05","06",
              "07","08","09","10","11","12"]
   ring = ["Forward", "Middle", "Backward"]
-  parameters = ["W+"+w+"_RB4"+s+"_S"+c+"_"+ri for w in wheels
+  parameters = ["W+"+w+"_RB4"+s+"_S10"+"_"+ri for w in wheels
                 for s in subrolls for c in chambers for ri in ring
                 if ( (w == "0") and (ri == "Forward") ) or ( w!="0" )]
   names = []
@@ -127,7 +127,6 @@ def etaEndcap_list():
       lines.append(y)
       #line.replace("(.*)glob(.*)","(.*)globes(.*)")
 
-
   name = []
   etaMin = []
   etaMax = []
@@ -182,13 +181,16 @@ def average_chambers(wheel, dictionary, X, Y):
       for s in subrolls:
         for ri in ring:
           eta = [v["eta"] for k, v in dictionary.items() 
-                 for c in chambers if k == "W+"+w+"_RB4"+s+"_S"+c+"_"+ri]
+                 for c in chambers if k == "W+"+w+"_RB4"+s+"_S10"+"_"+ri]
           rates = [v["rates"] for k, v in dictionary.items()
-                 for c in chambers if k == "W+"+w+"_RB4"+s+"_S"+c+"_"+ri]
+                 for c in chambers if k == "W+"+w+"_RB4"+s+"_S10"+"_"+ri]
+          names = [k for k, v in dictionary.items()
+                 for c in chambers if k == "W+"+w+"_RB4"+s+"_S10"+"_"+ri]
+
           if rates and len(rates) != 1: 
             X.append( sum(eta)/len(eta) )
             Y.append( sum(rates)/len(rates) )
-
+          print names
   elif wheel == 0:
     rolls = ["_A","_B","_C"]
     chambers = [
@@ -200,12 +202,14 @@ def average_chambers(wheel, dictionary, X, Y):
     ring = ["_R2", "_R3"]
     for r in ring:
       for roll in rolls:
-        eta = [v["eta"] for k, v in dictionary.items() for c in chambers if k == "RE+4"+r+"_CH"+c+roll]
-        rates = [v["rates"] for k, v in dictionary.items() for c in chambers if k == "RE+4"+r+"_CH"+c+roll]
-        if rates and len(rates) != 1:
+        eta = [v["eta"] for k, v in dictionary.items() for c in chambers if k == "RE+4"+r+"_CH28"+roll]
+        rates = [v["rates"] for k, v in dictionary.items() for c in chambers if k == "RE+4"+r+"_CH28"+roll]
+        names = [k for k, v in dictionary.items() for c in chambers if k == "RE+4"+r+"_CH28"+roll]
+        if rates:# and len(rates) != 1:       
           X.append( sum(eta)/len(eta) )
           Y.append( sum(rates)/len(rates) )
-
+        #print names
+   
 def main():
   wheelEtaList = etaWheel_lists() #[names, eta] 
   print len(wheelEtaList[0]), len(wheelEtaList[1])
@@ -235,7 +239,7 @@ def main():
   gr.SetLineWidth( 4 )
   gr.SetMarkerColor( 4 )
   gr.SetMarkerStyle( 21 )
-  gr.SetTitle( 'Pseudorapidity Distribution for Section 4' )
+  gr.SetTitle( 'Pseudorapidity Distribution for Layer 4' )
   gr.GetXaxis().SetTitle( '#Eta' )
   gr.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   H = 800
@@ -243,6 +247,8 @@ def main():
   canv = TCanvas("c1", "Canvas", W, H)
   gr.Draw("AP")
   canv.SaveAs("etaDistro.gif")
+  canv.SaveAs("etaDistro.pdf")
+  canv.SaveAs("etaDistro.png")
 
 
 if __name__ == "__main__":
