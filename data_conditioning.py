@@ -2,7 +2,7 @@ import json
 from numpy import median
 
 
-runNumfile = "output_strips.json"
+runNumfile = "output_strips2.json"
 with open(runNumfile, 'r') as dataf:
   rates1 = json.loads(dataf.read())
 print len(rates1)
@@ -35,7 +35,7 @@ print "the length of temp is "+str(len(temp))
 for k,v in temp.items():
   print k  
 
-with open('data.json', 'w') as outfile:  
+with open('data2.json', 'w') as outfile:  
     json.dump(temp, outfile)
 
 
