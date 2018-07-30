@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import re
 import json
 import sys
@@ -10,7 +9,6 @@ from ROOT import TCanvas, TGraph
 from ROOT import gROOT
 from array import array
 from numpy import median
-
 import numpy as np
 from scipy import stats
 
@@ -55,7 +53,7 @@ def ratesWheel_lists():
     rates1 = json.loads(dataf.read())
   wheels = ["0", "1", "2"]
   rolls = ["1", "2", "3", "4"]
-  subrolls = ["in","out","+","-", "++", "--"]
+  subrolls = ["+","-","in","out"]#, "++", "--"]
   chambers = [
              "01","02","03","04","05","06",
              "07","08","09","10","11","12"]
@@ -164,22 +162,36 @@ def average_chambers(wheel, dictionary, X, Y):
   if wheel == 1:
     wheels = ["0", "1", "2"]
     rolls = ["1", "2", "3", "4"]
-    subrolls = ["in","out","+","-", "++", "--"]
+    subrolls = ["+","-","in","out"]#, "++", "--"]
     chambers = [
                "01","02","03","04","05","06",
                "07","08","09","10","11","12"]
     ring = ["Forward", "Middle", "Backward"]
     for w in wheels:
-      for s in subrolls:
+      if wheelSection == "RB3" or wheelSection == "RB4":
+        for s in subrolls:
+          for ri in ring:
+          #for c in chambers:
+            eta = [v["eta"] for k, v in dictionary.items()
+                   for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
+            rates = [v["rates"] for k, v in dictionary.items()
+                   for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
+            names = [k for k, v in dictionary.items()
+                   for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
+            if rates:
+              print names
+              X.append( median(eta)   )  #sum(eta)/len(eta) )
+              Y.append( median(rates) )  #sum(rates)/len(rates) )
+      elif wheelSection == "RB1" or wheelSection == "RB2":
         for ri in ring:
-          eta = [v["eta"] for k, v in dictionary.items() 
+          eta = [v["eta"] for k, v in dictionary.items() for s in subrolls
                  for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
-          rates = [v["rates"] for k, v in dictionary.items()
+          rates = [v["rates"] for k, v in dictionary.items() for s in subrolls
                  for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
-          if rates and len(rates) != 1: 
-  #          print max(set(rates), key=rates.count)
-            #X.append( max(set(eta), key=eta.count)     )
-            #Y.append( max(set(rates), key=rates.count) )
+          names = [k for k, v in dictionary.items() for s in subrolls
+                 for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
+          if rates:# and len(rates) != 1: 
+            print names
             X.append( median(eta)   )  #sum(eta)/len(eta) )
             Y.append( median(rates) )  #sum(rates)/len(rates) )
 
@@ -428,15 +440,26 @@ def eta_plot(X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W,Y8W,
   canv = TCanvas("c1", "Canvas", 800, 800)
   canv.Divide(2,2,0,0)
   maxY = 20
-#*mg4.GetHistogram().GetMaximum()
 
   canv.cd(1)
   print " ------------ Creating TMultiGraph -----------"
   mg1 = TMultiGraph()
   mg1.Add(gr1,"AP")
+#  mg1.Add(gr2,"AP")
+#  mg1.Add(gr3,"AP")
+#  mg1.Add(gr4,"AP")
   mg1.Add(gr5,"AP")
+#  mg1.Add(gr6,"AP")
+#  mg1.Add(gr7,"AP")
+#  mg1.Add(gr8,"AP")
   mg1.Add(gr9,"AP")
+#  mg1.Add(gr10,"AP")
+#  mg1.Add(gr11,"AP")
+#  mg1.Add(gr12,"AP")
   mg1.Add(gr13,"AP")
+#  mg1.Add(gr14,"AP")
+#  mg1.Add(gr15,"AP")
+#  mg1.Add(gr16,"AP")
   mg1.Draw("a")
   mg1.SetTitle( 'Pseudorapidity Distribution')
   mg1.GetXaxis().SetTitle( '#eta' )
@@ -525,6 +548,6 @@ if __name__ == "__main__":
     xW[i], yW[i], xE[i], yE[i] = main()
 
   eta_plot(xW[0],yW[0],xW[1],yW[1],xW[2],yW[2],xW[3],yW[3],xW[4],yW[4],xW[5],yW[5],xW[6],yW[6],xW[7],yW[7],
-           xE[0],yE[0],xE[1],yE[1],xE[2],yE[2],xE[3],yE[3],xE[4],yE[4],xE[5],yE[5],xE[6],yE[6],xE[7],yE[7],)
+           xE[0],yE[0],xE[1],yE[1],xE[2],yE[2],xE[3],yE[3],xE[4],yE[4],xE[5],yE[5],xE[6],yE[6],xE[7],yE[7])
   
 
