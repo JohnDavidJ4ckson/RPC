@@ -22,7 +22,7 @@ def is_number(s):
         return False
 
 def ratesEndcap_list():
-  runNumfile = "output_rolls2018.json"
+  runNumfile = "data.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   rolls = ["_A","_B","_C"] #, "_D"]
@@ -41,8 +41,8 @@ def ratesEndcap_list():
       for c in chambers:
         try:
           #print r
-          if float(rates1["rate"][endcapSection+r+"_CH"+c+roll]["ratesquarecm"]) == 0: continue
-          rates.append(float(rates1["rate"][endcapSection+r+"_CH"+c+roll]["ratesquarecm"]))
+          if float(rates1["rates"][endcapSection+r+"_CH"+c+roll]["ratesquarecm"]) == 0: continue
+          rates.append(float(rates1["rates"][endcapSection+r+"_CH"+c+roll]["ratesquarecm"]))
           names.append(endcapSection+r+"_CH"+c+roll)
         except KeyError:
           continue
@@ -50,7 +50,7 @@ def ratesEndcap_list():
   return [names, rates]
 
 def ratesWheel_lists():
-  runNumfile = "output_rolls2018.json"
+  runNumfile = "data.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   wheels = ["0", "1", "2"]
@@ -63,12 +63,13 @@ def ratesWheel_lists():
   parameters = ["W+"+w+"_"+wheelSection+s+"_S"+c+"_"+ri for w in wheels
                 for s in subrolls for c in chambers for ri in ring
                 if ( (w == "0") and (ri == "Forward") ) or ( w!="0" )]
+  #W+2_RB2out_S10_Middle
   names = []
   rates = []
   for p in parameters:
     try:
-      if float(rates1["rate"][p]["ratesquarecm"]) == 0: continue
-      rates.append(float(rates1["rate"][p]["ratesquarecm"]))
+      if float(rates1["rates"][p]["ratesquarecm"]) == 0: continue
+      rates.append(float(rates1["rates"][p]["ratesquarecm"]))
       names.append(p)
     except KeyError:
       continue
@@ -176,11 +177,11 @@ def average_chambers(wheel, dictionary, X, Y):
           rates = [v["rates"] for k, v in dictionary.items()
                  for c in chambers if k == "W+"+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
           if rates and len(rates) != 1: 
-            print max(set(rates), key=rates.count)
-            X.append( max(set(eta), key=eta.count)     )
-            Y.append( max(set(rates), key=rates.count) )
-            #  X.append( median(eta)   )  #sum(eta)/len(eta) )
-            #  Y.append( median(rates) )  #sum(rates)/len(rates) )
+  #          print max(set(rates), key=rates.count)
+            #X.append( max(set(eta), key=eta.count)     )
+            #Y.append( max(set(rates), key=rates.count) )
+            X.append( median(eta)   )  #sum(eta)/len(eta) )
+            Y.append( median(rates) )  #sum(rates)/len(rates) )
 
   elif wheel == 0:
     rolls = ["_A","_B","_C"] #, "_D"]
@@ -196,127 +197,159 @@ def average_chambers(wheel, dictionary, X, Y):
         eta = [v["eta"] for k, v in dictionary.items() for c in chambers if k == endcapSection+r+"_CH"+c+roll]
         rates = [v["rates"] for k, v in dictionary.items() for c in chambers if k == endcapSection+r+"_CH"+c+roll]
         if rates:# and len(rates) != 1:
-          X.append( max(set(eta), key=eta.count)     )
-          Y.append( max(set(rates), key=rates.count) )
-          #  X.append( median(eta)   )  #sum(eta)/len(eta) )
-          #  Y.append( median(rates) )  #sum(rates)/len(rates) )
+          #X.append( max(set(eta), key=eta.count)     )
+          #Y.append( max(set(rates), key=rates.count) )
+          X.append( median(eta)   )  #sum(eta)/len(eta) )
+          Y.append( median(rates) )  #sum(rates)/len(rates) )
 
 def main():
   #if sys.argv[2]: print str(sys.argv[2])
   wheelEtaList = etaWheel_lists() #[names, eta] 
-  print len(wheelEtaList[0]), len(wheelEtaList[1])
+  print "eta Wheel List Done"
+  print  len(wheelEtaList[0]), len(wheelEtaList[1])
   endcapEtaList = etaEndcap_list() #[names, eta] 
-  print len(endcapEtaList[0]), len(endcapEtaList[1])
+  print "endcap eta list Done"
+  print  len(endcapEtaList[0]), len(endcapEtaList[1])
   wheelRatesList = ratesWheel_lists() #[names, rates]
+  print "wheel rates list Done" 
   print len(wheelRatesList[0]), len(wheelRatesList[1])
   endcapRatesList = ratesEndcap_list() #[names, rates]
+  print "endcap rates list Done" 
   print len(endcapRatesList[0]), len(endcapRatesList[1])
 
   wheelIntersect = intersect_list(wheelEtaList,wheelRatesList) #name{eta, rates}
+  print "wheel eta/rate intersect Done"
   endcapIntersect = intersect_list(endcapEtaList,endcapRatesList) #name{eta, rates}
+  print "endcap eta/rate intersect Done"
 
-  x, y = array( 'd' ), array( 'd' )
+  xW, yW = array( 'd' ), array( 'd' )
+  xE, yE = array( 'd' ), array( 'd' )
 
-  average_chambers(1, wheelIntersect, x, y)
-  average_chambers(0, endcapIntersect, x, y)
+  average_chambers(1, wheelIntersect,  xW, yW)
+  print "Wheel Average Done"
+  average_chambers(0, endcapIntersect, xE, yE)
+  print "endcap average Done"
 
-  print len(x)
-  print len(y)
+  print len(xW), len(yW)
+  print len(xE), len(yE)
 
-  return x, y
+  return xW, yW, xE, yE
 
-def eta_plot(X1,Y1,X2,Y2,X3,Y3,X4,Y4):
-  n = len(X1+X2+X3+X4)
-  listX = [X1, X2, X3, X4]
-  listY = [Y1, Y2, Y3, Y4]
-
-  print "----- Creating TGraph -----"
-  X, Y = array( 'd' ), array( 'd' )
-
-  for lx in listX:
-    for i in range(len(lx)): X.append(lx[i])
-    print len(lx)
-  for ly in listY:
-    for i in range(len(ly)): Y.append(ly[i])
-    print len(ly)
-
-  print len(X)
-  print len(Y)
-  H = 800
-  W = 800
-  canv = TCanvas("c1", "Canvas", W, H)
-
-  n1 = len(X1)
-  gr1 = TGraph(n1,X1,Y1)
-  #gr = gr0.GetHistogram()
+def eta_plot(X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,
+             X1E,Y1E,X2E,Y2E,X3E,Y3E,X4E,Y4E):
+  print "------ Creating First TGraph ----------"
+  n1W = len(X1W)
+  gr1 = TGraph(n1W,X1W,Y1W)
   gr1.SetLineColor( 2 )
   gr1.SetLineWidth( 4 )
-  gr1.SetMarkerColor( kOrange )
-  gr1.SetMarkerStyle( 21 )
-  gr1.SetTitle( 'Layer 1' )
-  gr1.GetXaxis().SetTitle( '#Eta' )
+  gr1.SetMarkerColor( 2 )
+  gr1.SetMarkerStyle( 20 )
+  gr1.SetMarkerSize( 1.5 )
+  gr1.SetTitle( 'Layer 1 Wheel' )
+  gr1.GetXaxis().SetTitle( '#eta' )
   gr1.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
-  #gr1.Draw("SAME AP")
 
-  n2 = len(X2)
-  gr2 = TGraph(n2,X2,Y2)
-  #gr = gr0.GetHistogram()
+  print "------ Creating Second TGraph ----------"
+  n2W = len(X2W)
+  gr2 = TGraph(n2W,X2W,Y2W)
   gr2.SetLineColor( 3 )
   gr2.SetLineWidth( 5 )
-  gr2.SetMarkerColor( kBlue )
-  gr2.SetMarkerStyle( 22 )
-  gr2.SetTitle( 'Layer 2') 
-  gr2.GetXaxis().SetTitle( '#Eta' )
+  gr2.SetMarkerColor( 4 )
+  gr2.SetMarkerStyle( 21 )
+  gr2.SetMarkerSize( 1.5 )
+  gr2.SetTitle( 'Layer 2 Wheel') 
+  gr2.GetXaxis().SetTitle( '#eta' )
   gr2.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
-  #gr2.Draw("SAME AP")
 
-  n3 = len(X3)
-  gr3 = TGraph(n3,X3,Y3)
-  #gr = gr0.GetHistogram()
+  n3W = len(X3W)
+  gr3 = TGraph(n3W,X3W,Y3W)
   gr3.SetLineColor( 4 )
   gr3.SetLineWidth( 6 )
-  gr3.SetMarkerColor( kRed )
-  gr3.SetMarkerStyle( 23 )
-  gr3.SetTitle( 'Layer 3' )
-  gr3.GetXaxis().SetTitle( '#Eta' )
+  gr3.SetMarkerColor( 6 )
+  gr3.SetMarkerStyle( 22 )
+  gr3.SetMarkerSize( 1.5 )
+  gr3.SetTitle( 'Layer 3 Wheel' )
+  gr3.GetXaxis().SetTitle( '#eta' )
   gr3.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
-  #gr3.Draw("SAME AP")
 
-  n4 = len(X4)
-  gr4 = TGraph(n4,X4,Y4)
-  #gr = gr0.GetHistogram()
+  n4W = len(X4W)
+  gr4 = TGraph(n4W,X4W,Y4W)
   gr4.SetLineColor( 5 )
   gr4.SetLineWidth( 7 )
-  gr4.SetMarkerColor( kGreen )
-  gr4.SetMarkerStyle( 24 )
-  gr4.SetTitle( 'Layer 4' )
-  gr4.GetXaxis().SetTitle( '#Eta' )
+  gr4.SetMarkerColor( 28 )
+  gr4.SetMarkerStyle( 23 )
+  gr4.SetMarkerSize( 1.5 )
+  gr4.SetTitle( 'Layer 4 Wheel' )
+  gr4.GetXaxis().SetTitle( '#eta' )
   gr4.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
-  #gr4.Draw("SAME")
 
+  n1E = len(X1E)
+  gr5 = TGraph(n1E,X1E,Y1E)
+  gr5.SetLineColor( 2 )
+  gr5.SetLineWidth( 4 )
+  gr5.SetMarkerColor( 2 )
+  gr5.SetMarkerStyle( 24 )
+  gr5.SetMarkerSize( 1.5 )
+  gr5.SetTitle( 'Layer 1 Endcap' )
+  gr5.GetXaxis().SetTitle( '#eta' )
+  gr5.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+
+  n2E = len(X2E)
+  gr6 = TGraph(n2E,X2E,Y2E)
+  gr6.SetLineColor( 3 )
+  gr6.SetLineWidth( 5 )
+  gr6.SetMarkerColor( 4 )
+  gr6.SetMarkerStyle( 25 )
+  gr6.SetMarkerSize( 1.5 )
+  gr6.SetTitle( 'Layer 2 Endcap')
+  gr6.GetXaxis().SetTitle( '#eta' )
+  gr6.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+
+  n3E = len(X3E)
+  gr7 = TGraph(n3E,X3E,Y3E)
+  gr7.SetLineColor( 4 )
+  gr7.SetLineWidth( 6 )
+  gr7.SetMarkerColor( 6 )
+  gr7.SetMarkerStyle( 26 )
+  gr7.SetMarkerSize( 1.5 )
+  gr7.SetTitle( 'Layer 3 Endcap' )
+  gr7.GetXaxis().SetTitle( '#eta' )
+  gr7.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+
+  n4E = len(X4E)
+  gr8 = TGraph(n4E,X4E,Y4E)
+  gr8.SetLineColor( 5 )
+  gr8.SetLineWidth( 7 )
+  gr8.SetMarkerColor( 28 )
+  gr8.SetMarkerStyle( 32 )
+  gr8.SetMarkerSize( 1.5 )
+  gr8.SetTitle( 'Layer 4 Endcap' )
+  gr8.GetXaxis().SetTitle( '#eta' )
+  gr8.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+
+  print "----- Creating TCanvas -----"
+  H = 800
+  W = 800
+  canv = TCanvas("c1", "Canvas", 800, 800)
+
+
+  print " ------------ Creating TMultiGraph -----------"
   mg = TMultiGraph()
   mg.Add(gr1,"AP")
   mg.Add(gr2,"AP")
   mg.Add(gr3,"AP")
   mg.Add(gr4,"AP")
+  mg.Add(gr5,"AP")
+  mg.Add(gr6,"AP")
+  mg.Add(gr7,"AP")
+  mg.Add(gr8,"AP")
   mg.Draw("a")
   mg.SetTitle( 'Pseudorapidity Distribution')
-  mg.GetXaxis().SetTitle( '#Eta' )
+  mg.GetXaxis().SetTitle( '#eta' )
   mg.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
-  #legend = TLegend(0.1,0.7,0.48,0.9)
-  #legend.SetHeader("The Legend Title","C") #// option "C" allows to center the header
-  #legend.AddEntry("gr1","Function abs(#frac{sin(x)}{x})","l")
-  #legend.AddEntry("gr2","Graph with error bars","lep")
-  #legend.AddEntry("gr3","Graph with error bars","lep")
-  #legend.AddEntry("gr4","Graph with error bars","lep")
   canv.BuildLegend(0.1,0.7,0.48,0.9)
-  #legend.Draw()
-
   canv.SaveAs("etaDistro.gif")
-
-
-
 
 if __name__ == "__main__":
   endcapSectionList = ["RE+1", "RE+2", "RE+3", "RE+4"]
@@ -336,13 +369,15 @@ if __name__ == "__main__":
           endcapSection = str(arg)
       elif opt in ("-o", "--ofile"):
           wheelSection = str(arg)
-  x, y = [0,0,0,0], [0,0,0,0]
+  xW, yW = [0,0,0,0], [0,0,0,0]
+  xE, yE = [0,0,0,0], [0,0,0,0]
   for i in range(4):
     endcapSection = endcapSectionList[i]
     wheelSection = wheelSectionList[i]
-    x[i],y[i] = main()
+    xW[i], yW[i], xE[i], yE[i] = main()
 
-  eta_plot(x[0],y[0],x[1],y[1],x[2],y[2],x[3],y[3])
+  eta_plot(xW[0],yW[0],xW[1],yW[1],xW[2],yW[2],xW[3],yW[3],
+           xE[0],yE[0],xE[1],yE[1],xE[2],yE[2],xE[3],yE[3])
   
 
 
