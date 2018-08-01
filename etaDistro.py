@@ -11,6 +11,8 @@ from array import array
 from numpy import median
 import numpy as np
 from scipy import stats
+import ROOT as rt
+import CMS_lumi, tdrstyle
 
 def is_number(s):
     try:
@@ -53,10 +55,10 @@ def ratesWheel_lists():
     rates1 = json.loads(dataf.read())
   wheels = ["0", "1", "2"]
   rolls = ["1", "2", "3", "4"]
-  subrolls = ["+","-","in","out"]#, "++", "--"]
+  subrolls = ["","+","-","in","out"]#, "++", "--"]
   chambers = [
-             "01","02","03","04","05","06",
-             "07","08","09","10","11","12"]
+             "01","02","03","05","06",
+             "07","08","10","12"] # faltan 4, 9, 11
   ring = ["Forward", "Middle", "Backward"]
   parameters = ["W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri for w in wheels
                 for s in subrolls for c in chambers for ri in ring ]
@@ -162,38 +164,38 @@ def average_chambers(wheel, dictionary, X, Y):
   if wheel == 1:
     wheels = ["0", "1", "2"]
     rolls = ["1", "2", "3", "4"]
-    subrolls = ["+","-","in","out"]#, "++", "--"]
+    subrolls = ["","+","-","in","out"]#, "++", "--"]
     chambers = [
                "01","02","03","04","05","06",
-               "07","08","09","10","11","12"]
+               "07","08","09","10","11","12"] #faltan 9, 11 y 4
     ring = ["Forward", "Middle", "Backward"]
     for w in wheels:
-      if wheelSection == "RB3" or wheelSection == "RB4":
-        for s in subrolls:
-          for ri in ring:
-          #for c in chambers:
-            eta = [v["eta"] for k, v in dictionary.items()
-                   for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
-            rates = [v["rates"] for k, v in dictionary.items()
-                   for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
-            names = [k for k, v in dictionary.items()
-                   for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
-            if rates:
-              print names
-              X.append( median(eta)   )  #sum(eta)/len(eta) )
-              Y.append( median(rates) )  #sum(rates)/len(rates) )
-      elif wheelSection == "RB1" or wheelSection == "RB2":
+      #if wheelSection == "RB3" or wheelSection == "RB4":
+      for s in subrolls:
         for ri in ring:
-          eta = [v["eta"] for k, v in dictionary.items() for s in subrolls
+          #for c in chambers:
+          eta = [v["eta"] for k, v in dictionary.items()
                  for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
-          rates = [v["rates"] for k, v in dictionary.items() for s in subrolls
+          rates = [v["rates"] for k, v in dictionary.items()
                  for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
-          names = [k for k, v in dictionary.items() for s in subrolls
+          names = [k for k, v in dictionary.items()
                  for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
-          if rates:# and len(rates) != 1: 
-            print names
+          if rates:
+#            print names
             X.append( median(eta)   )  #sum(eta)/len(eta) )
             Y.append( median(rates) )  #sum(rates)/len(rates) )
+      #elif wheelSection == "RB1" or wheelSection == "RB2":
+      #  for ri in ring:
+      #    eta = [v["eta"] for k, v in dictionary.items() for s in subrolls
+      #           for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
+      #    rates = [v["rates"] for k, v in dictionary.items() for s in subrolls
+      #           for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
+      #    names = [k for k, v in dictionary.items() for s in subrolls
+      #           for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
+      #    if rates:# and len(rates) != 1: 
+      #      print names
+      #      X.append( median(eta)   )  #sum(eta)/len(eta) )
+      #      Y.append( median(rates) )  #sum(rates)/len(rates) )
 
   elif wheel == 0:
     rolls = ["_A","_B","_C"] #, "_D"]
@@ -241,288 +243,510 @@ def main():
   xE, yE = array( 'd' ), array( 'd' )
 
   average_chambers(1, wheelIntersect,  xW, yW)
-  print "Wheel Average Done"
+  #print "Wheel Average Done for "+ wheelSection
   average_chambers(0, endcapIntersect, xE, yE)
-  print "endcap average Done"
+  #print "endcap average Done for "+ endcapSection
 
   #print len(xW), len(yW)
   #print len(xE), len(yE)
 
   return xW, yW, xE, yE
 
-def eta_plot(X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W,Y8W,
-             X1E,Y1E,X2E,Y2E,X3E,Y3E,X4E,Y4E,X5E,Y5E,X6E,Y6E,X7E,Y7E,X8E,Y8E):
+def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W,Y8W,X9W,Y9W,
+             X0E,Y0E,X1E,Y1E,X2E,Y2E,X3E,Y3E,X4E,Y4E,X5E,Y5E,X6E,Y6E,X7E,Y7E,X8E,Y8E,X9E,Y9E):
+  print "------ Setting Up Format ----------"
+  tdrstyle.setTDRStyle()
+  #change the CMS_lumi variables (see CMS_lumi.py)
+  CMS_lumi.writeExtraText = 1
+  CMS_lumi.extraText  = "Preliminary"
+  CMS_lumi.extraText2 = "2018 pp data"
+  CMS_lumi.lumi_sqrtS = "13 TeV" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+  CMS_lumi.writeTitle = 1
+  CMS_lumi.textTitle = 'title'
 
+  iPos = 11
+  if( iPos==0 ): CMS_lumi.relPosX = 0.12
+         
+  H_ref = 600;
+  W_ref = 800;
+  W = W_ref  
+  H = H_ref
+  iPeriod = 0
+  # references for T, B, L, R  
+  T = 0.08*H_ref
+  B = 0.12*H_ref
+  L = 0.12*W_ref
+  R = 0.04*W_ref
+
+  
   print "------ Creating Wheel TGraph ----------"
+  n0W = len(X0W)
+  gr0W = TGraph(n0W,X0W,Y0W)
+  gr0W.SetLineColor( 2 )
+  gr0W.SetLineWidth( 4 )
+  gr0W.SetMarkerColor( 2 )
+  gr0W.SetMarkerStyle( 20 )
+  gr0W.SetMarkerSize( 1.5 )
+  gr0W.SetTitle( 'Layer 1 Wheel' )
+  gr0W.GetXaxis().SetTitle( '#eta' )
+  gr0W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+
   n1W = len(X1W)
-  gr1 = TGraph(n1W,X1W,Y1W)
-  gr1.SetLineColor( 2 )
-  gr1.SetLineWidth( 4 )
-  gr1.SetMarkerColor( 2 )
-  gr1.SetMarkerStyle( 20 )
-  gr1.SetMarkerSize( 1.5 )
-  gr1.SetTitle( 'Layer 1 Wheel' )
-  gr1.GetXaxis().SetTitle( '#eta' )
-  gr1.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  gr1W = TGraph(n1W,X1W,Y1W)
+  gr1W.SetLineColor( 2 )
+  gr1W.SetLineWidth( 4 )
+  gr1W.SetMarkerColor( kRed+2 )
+  gr1W.SetMarkerStyle( 20 )
+  gr1W.SetMarkerSize( 1.5 )
+  gr1W.SetTitle( 'Layer 1 Wheel' )
+  gr1W.GetXaxis().SetTitle( '#eta' )
+  gr1W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   n2W = len(X2W)
-  gr2 = TGraph(n2W,X2W,Y2W)
-  gr2.SetLineColor( 3 )
-  gr2.SetLineWidth( 5 )
-  gr2.SetMarkerColor( 4 )
-  gr2.SetMarkerStyle( 21 )
-  gr2.SetMarkerSize( 1.5 )
-  gr2.SetTitle( 'Layer 2 Wheel') 
-  gr2.GetXaxis().SetTitle( '#eta' )
-  gr2.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  gr2W = TGraph(n2W,X2W,Y2W)
+  gr2W.SetLineColor( 3 )
+  gr2W.SetLineWidth( 5 )
+  gr2W.SetMarkerColor( 4 )
+  gr2W.SetMarkerStyle( 21 )
+  gr2W.SetMarkerSize( 1.5 )
+  gr2W.SetTitle( 'Layer 2 Wheel') 
+  gr2W.GetXaxis().SetTitle( '#eta' )
+  gr2W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   n3W = len(X3W)
-  gr3 = TGraph(n3W,X3W,Y3W)
-  gr3.SetLineColor( 4 )
-  gr3.SetLineWidth( 6 )
-  gr3.SetMarkerColor( 6 )
-  gr3.SetMarkerStyle( 22 )
-  gr3.SetMarkerSize( 1.5 )
-  gr3.SetTitle( 'Layer 3 Wheel' )
-  gr3.GetXaxis().SetTitle( '#eta' )
-  gr3.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  gr3W = TGraph(n3W,X3W,Y3W)
+  gr3W.SetLineColor( 4 )
+  gr3W.SetLineWidth( 6 )
+  gr3W.SetMarkerColor( 6 )
+  gr3W.SetMarkerStyle( 22 )
+  gr3W.SetMarkerSize( 1.5 )
+  gr3W.SetTitle( 'Layer 3 Wheel' )
+  gr3W.GetXaxis().SetTitle( '#eta' )
+  gr3W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   n4W = len(X4W)
-  gr4 = TGraph(n4W,X4W,Y4W)
-  gr4.SetLineColor( 5 )
-  gr4.SetLineWidth( 7 )
-  gr4.SetMarkerColor( 28 )
-  gr4.SetMarkerStyle( 23 )
-  gr4.SetMarkerSize( 1.5 )
-  gr4.SetTitle( 'Layer 4 Wheel' )
-  gr4.GetXaxis().SetTitle( '#eta' )
-  gr4.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  gr4W = TGraph(n4W,X4W,Y4W)
+  gr4W.SetLineColor( 5 )
+  gr4W.SetLineWidth( 7 )
+  gr4W.SetMarkerColor( 28 )
+  gr4W.SetMarkerStyle( 23 )
+  gr4W.SetMarkerSize( 1.5 )
+  gr4W.SetTitle( 'Layer 4 Wheel' )
+  gr4W.GetXaxis().SetTitle( '#eta' )
+  gr4W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   print "------ Creating Endcap TGraph ----------"
+  n0E = len(X0E)
+  gr0E = TGraph(n0E,X0E,Y0E)
+  gr0E.SetLineColor( 2 )
+  gr0E.SetLineWidth( 4 )
+  gr0E.SetMarkerColor( 2 )
+  gr0E.SetMarkerStyle( 24 )
+  gr0E.SetMarkerSize( 1.5 )
+  gr0E.SetTitle( 'Layer 1 Endcap' )
+  gr0E.GetXaxis().SetTitle( '#eta' )
+  gr0E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+
   n1E = len(X1E)
-  gr5 = TGraph(n1E,X1E,Y1E)
-  gr5.SetLineColor( 2 )
-  gr5.SetLineWidth( 4 )
-  gr5.SetMarkerColor( 2 )
-  gr5.SetMarkerStyle( 24 )
-  gr5.SetMarkerSize( 1.5 )
-  gr5.SetTitle( 'Layer 1 Endcap' )
-  gr5.GetXaxis().SetTitle( '#eta' )
-  gr5.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  gr1E = TGraph(n1E,X1E,Y1E)
+  gr1E.SetLineColor( 2 )
+  gr1E.SetLineWidth( 4 )
+  gr1E.SetMarkerColor( kRed+2 )
+  gr1E.SetMarkerStyle( 24 )
+  gr1E.SetMarkerSize( 1.5 )
+  gr1E.SetTitle( 'Layer 1 Endcap' )
+  gr1E.GetXaxis().SetTitle( '#eta' )
+  gr1E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   n2E = len(X2E)
-  gr6 = TGraph(n2E,X2E,Y2E)
-  gr6.SetLineColor( 3 )
-  gr6.SetLineWidth( 5 )
-  gr6.SetMarkerColor( 4 )
-  gr6.SetMarkerStyle( 25 )
-  gr6.SetMarkerSize( 1.5 )
-  gr6.SetTitle( 'Layer 2 Endcap')
-  gr6.GetXaxis().SetTitle( '#eta' )
-  gr6.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  gr2E = TGraph(n2E,X2E,Y2E)
+  gr2E.SetLineColor( 3 )
+  gr2E.SetLineWidth( 5 )
+  gr2E.SetMarkerColor( 4 )
+  gr2E.SetMarkerStyle( 25 )
+  gr2E.SetMarkerSize( 1.5 )
+  gr2E.SetTitle( 'Layer 2 Endcap')
+  gr2E.GetXaxis().SetTitle( '#eta' )
+  gr2E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   n3E = len(X3E)
-  gr7 = TGraph(n3E,X3E,Y3E)
-  gr7.SetLineColor( 4 )
-  gr7.SetLineWidth( 6 )
-  gr7.SetMarkerColor( 6 )
-  gr7.SetMarkerStyle( 26 )
-  gr7.SetMarkerSize( 1.5 )
-  gr7.SetTitle( 'Layer 3 Endcap' )
-  gr7.GetXaxis().SetTitle( '#eta' )
-  gr7.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  gr3E = TGraph(n3E,X3E,Y3E)
+  gr3E.SetLineColor( 4 )
+  gr3E.SetLineWidth( 6 )
+  gr3E.SetMarkerColor( 6 )
+  gr3E.SetMarkerStyle( 26 )
+  gr3E.SetMarkerSize( 1.5 )
+  gr3E.SetTitle( 'Layer 3 Endcap' )
+  gr3E.GetXaxis().SetTitle( '#eta' )
+  gr3E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   n4E = len(X4E)
-  gr8 = TGraph(n4E,X4E,Y4E)
-  gr8.SetLineColor( 5 )
-  gr8.SetLineWidth( 7 )
-  gr8.SetMarkerColor( 28 )
-  gr8.SetMarkerStyle( 32 )
-  gr8.SetMarkerSize( 1.5 )
-  gr8.SetTitle( 'Layer 4 Endcap' )
-  gr8.GetXaxis().SetTitle( '#eta' )
-  gr8.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  gr4E = TGraph(n4E,X4E,Y4E)
+  gr4E.SetLineColor( 5 )
+  gr4E.SetLineWidth( 7 )
+  gr4E.SetMarkerColor( 28 )
+  gr4E.SetMarkerStyle( 32 )
+  gr4E.SetMarkerSize( 1.5 )
+  gr4E.SetTitle( 'Layer 4 Endcap' )
+  gr4E.GetXaxis().SetTitle( '#eta' )
+  gr4E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   print "------ Creating Wheel TGraph ----------"
-  n9W = len(X5W)
-  gr9 = TGraph(n9W,X5W,Y5W)
-  gr9.SetLineColor( 2 )
-  gr9.SetLineWidth( 4 )
-  gr9.SetMarkerColor( 2 )
-  gr9.SetMarkerStyle( 20 )
-  gr9.SetMarkerSize( 1.5 )
-  gr9.SetTitle( 'Layer 1 Wheel' )
-  gr9.GetXaxis().SetTitle( '#eta' )
-  gr9.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  n5W = len(X5W)
+  gr5W = TGraph(n5W,X5W,Y5W)
+  gr5W.SetLineColor( 2 )
+  gr5W.SetLineWidth( 4 )
+  gr5W.SetMarkerColor( 2 )
+  gr5W.SetMarkerStyle( 20 )
+  gr5W.SetMarkerSize( 1.5 )
+  gr5W.SetTitle( 'Layer 1 Wheel' )
+  gr5W.GetXaxis().SetTitle( '#eta' )
+  gr5W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
-  n10W = len(X6W)
-  gr10 = TGraph(n10W,X6W,Y6W)
-  gr10.SetLineColor( 3 )
-  gr10.SetLineWidth( 5 )
-  gr10.SetMarkerColor( 4 )
-  gr10.SetMarkerStyle( 21 )
-  gr10.SetMarkerSize( 1.5 )
-  gr10.SetTitle( 'Layer 2 Wheel')
-  gr10.GetXaxis().SetTitle( '#eta' )
-  gr10.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  n6W = len(X6W)
+  gr6W = TGraph(n6W,X6W,Y6W)
+  gr6W.SetLineColor( 3 )
+  gr6W.SetLineWidth( 5 )
+  gr6W.SetMarkerColor( kRed+2 )
+  gr6W.SetMarkerStyle( 20 )
+  gr6W.SetMarkerSize( 1.5 )
+  gr6W.SetTitle( 'Layer 2 Wheel')
+  gr6W.GetXaxis().SetTitle( '#eta' )
+  gr6W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
-  n11W = len(X7W)
-  gr11 = TGraph(n11W,X7W,Y7W)
-  gr11.SetLineColor( 4 )
-  gr11.SetLineWidth( 6 )
-  gr11.SetMarkerColor( 6 )
-  gr11.SetMarkerStyle( 22 )
-  gr11.SetMarkerSize( 1.5 )
-  gr11.SetTitle( 'Layer 3 Wheel' )
-  gr11.GetXaxis().SetTitle( '#eta' )
-  gr11.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  n7W = len(X7W)
+  gr7W = TGraph(n7W,X7W,Y7W)
+  gr7W.SetLineColor( 4 )
+  gr7W.SetLineWidth( 6 )
+  gr7W.SetMarkerColor( 4 )
+  gr7W.SetMarkerStyle( 21 )
+  gr7W.SetMarkerSize( 1.5 )
+  gr7W.SetTitle( 'Layer 3 Wheel' )
+  gr7W.GetXaxis().SetTitle( '#eta' )
+  gr7W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
-  n12W = len(X8W)
-  gr12 = TGraph(n12W,X8W,Y8W)
-  gr12.SetLineColor( 5 )
-  gr12.SetLineWidth( 7 )
-  gr12.SetMarkerColor( 28 )
-  gr12.SetMarkerStyle( 23 )
-  gr12.SetMarkerSize( 1.5 )
-  gr12.SetTitle( 'Layer 4 Wheel' )
-  gr12.GetXaxis().SetTitle( '#eta' )
-  gr12.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  n8W = len(X8W)
+  gr8W = TGraph(n8W,X8W,Y8W)
+  gr8W.SetLineColor( 5 )
+  gr8W.SetLineWidth( 7 )
+  gr8W.SetMarkerColor( 6 )
+  gr8W.SetMarkerStyle( 22 )
+  gr8W.SetMarkerSize( 1.5 )
+  gr8W.SetTitle( 'Layer 4 Wheel' )
+  gr8W.GetXaxis().SetTitle( '#eta' )
+  gr8W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+
+  n9W = len(X9W)
+  gr9W = TGraph(n9W,X9W,Y9W)
+  gr9W.SetLineColor( 5 )
+  gr9W.SetLineWidth( 7 )
+  gr9W.SetMarkerColor( 28 )
+  gr9W.SetMarkerStyle( 23 )
+  gr9W.SetMarkerSize( 1.5 )
+  gr9W.SetTitle( 'Layer 4 Wheel' )
+  gr9W.GetXaxis().SetTitle( '#eta' )
+  gr9W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   print "------ Creating Endcap TGraph ----------"
-  n13E = len(X5E)
-  gr13 = TGraph(n13E,X5E,Y5E)
-  gr13.SetLineColor( 2 )
-  gr13.SetLineWidth( 4 )
-  gr13.SetMarkerColor( 2 )
-  gr13.SetMarkerStyle( 24 )
-  gr13.SetMarkerSize( 1.5 )
-  gr13.SetTitle( 'Layer 1 Endcap' )
-  gr13.GetXaxis().SetTitle( '#eta' )
-  gr13.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  n5E = len(X5E)
+  gr5E = TGraph(n5E,X5E,Y5E)
+  gr5E.SetLineColor( 2 )
+  gr5E.SetLineWidth( 4 )
+  gr5E.SetMarkerColor( 2 )
+  gr5E.SetMarkerStyle( 24 )
+  gr5E.SetMarkerSize( 1.5 )
+  gr5E.SetTitle( 'Layer 1 Endcap' )
+  gr5E.GetXaxis().SetTitle( '#eta' )
+  gr5E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
-  n14E = len(X6E)
-  gr14 = TGraph(n14E,X6E,Y6E)
-  gr14.SetLineColor( 3 )
-  gr14.SetLineWidth( 5 )
-  gr14.SetMarkerColor( 4 )
-  gr14.SetMarkerStyle( 25 )
-  gr14.SetMarkerSize( 1.5 )
-  gr14.SetTitle( 'Layer 2 Endcap')
-  gr14.GetXaxis().SetTitle( '#eta' )
-  gr14.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  n6E = len(X6E)
+  gr6E = TGraph(n6E,X6E,Y6E)
+  gr6E.SetLineColor( 3 )
+  gr6E.SetLineWidth( 5 )
+  gr6E.SetMarkerColor( kRed+2 )
+  gr6E.SetMarkerStyle( 24 )
+  gr6E.SetMarkerSize( 1.5 )
+  gr6E.SetTitle( 'Layer 2 Endcap')
+  gr6E.GetXaxis().SetTitle( '#eta' )
+  gr6E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
-  n15E = len(X7E)
-  gr15 = TGraph(n15E,X7E,Y7E)
-  gr15.SetLineColor( 4 )
-  gr15.SetLineWidth( 6 )
-  gr15.SetMarkerColor( 6 )
-  gr15.SetMarkerStyle( 26 )
-  gr15.SetMarkerSize( 1.5 )
-  gr15.SetTitle( 'Layer 3 Endcap' )
-  gr15.GetXaxis().SetTitle( '#eta' )
-  gr15.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  n7E = len(X7E)
+  gr7E = TGraph(n7E,X7E,Y7E)
+  gr7E.SetLineColor( 4 )
+  gr7E.SetLineWidth( 6 )
+  gr7E.SetMarkerColor( 4 )
+  gr7E.SetMarkerStyle( 25 )
+  gr7E.SetMarkerSize( 1.5 )
+  gr7E.SetTitle( 'Layer 3 Endcap' )
+  gr7E.GetXaxis().SetTitle( '#eta' )
+  gr7E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
-  n16E = len(X8E)
-  gr16 = TGraph(n16E,X8E,Y8E)
-  gr16.SetLineColor( 5 )
-  gr16.SetLineWidth( 7 )
-  gr16.SetMarkerColor( 28 )
-  gr16.SetMarkerStyle( 32 )
-  gr16.SetMarkerSize( 1.5 )
-  gr16.SetTitle( 'Layer 4 Endcap' )
-  gr16.GetXaxis().SetTitle( '#eta' )
-  gr16.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  n8E = len(X8E)
+  gr8E = TGraph(n8E,X8E,Y8E)
+  gr8E.SetLineColor( 5 )
+  gr8E.SetLineWidth( 7 )
+  gr8E.SetMarkerColor( 6 )
+  gr8E.SetMarkerStyle( 26 )
+  gr8E.SetMarkerSize( 1.5 )
+  gr8E.SetTitle( 'Layer 4 Endcap' )
+  gr8E.GetXaxis().SetTitle( '#eta' )
+  gr8E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
+  n9E = len(X9E)
+  gr9E = TGraph(n9E,X9E,Y9E)
+  gr9E.SetLineColor( 5 )
+  gr9E.SetLineWidth( 7 )
+  gr9E.SetMarkerColor( 28 )
+  gr9E.SetMarkerStyle( 32 )
+  gr9E.SetMarkerSize( 1.5 )
+  gr9E.SetTitle( 'Layer 4 Endcap' )
+  gr9E.GetXaxis().SetTitle( '#eta' )
+  gr9E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   print "----- Creating TCanvas -----"
-  H = 800
-  W = 800
-  canv = TCanvas("c1", "Canvas", 800, 800)
-  canv.Divide(2,2,0,0)
+  H = 1600
+  W = 1600
+  canv = TCanvas("c1", "Canvas",50,50,W,H)
+  canv.SetFillColor(0)
+  canv.SetBorderMode(0)
+  canv.SetFrameFillStyle(0)
+  canv.SetFrameBorderMode(0)
+  canv.SetLeftMargin( L/W )
+  canv.SetRightMargin( R/W )
+  canv.SetTopMargin( T/H )
+  canv.SetBottomMargin( B/H )
+  canv.SetTickx(0)
+  canv.SetTicky(0)
+  canv.Divide(3,2,0.001,0.001)
+  CMS_lumi.CMS_lumi(canv, iPeriod, iPos)
+  canv.cd()
+  canv.Update()
   maxY = 20
 
   canv.cd(1)
   print " ------------ Creating TMultiGraph -----------"
   mg1 = TMultiGraph()
-  mg1.Add(gr1,"AP")
-#  mg1.Add(gr2,"AP")
-#  mg1.Add(gr3,"AP")
-#  mg1.Add(gr4,"AP")
-  mg1.Add(gr5,"AP")
-#  mg1.Add(gr6,"AP")
-#  mg1.Add(gr7,"AP")
-#  mg1.Add(gr8,"AP")
-  mg1.Add(gr9,"AP")
-#  mg1.Add(gr10,"AP")
-#  mg1.Add(gr11,"AP")
-#  mg1.Add(gr12,"AP")
-  mg1.Add(gr13,"AP")
-#  mg1.Add(gr14,"AP")
-#  mg1.Add(gr15,"AP")
-#  mg1.Add(gr16,"AP")
+  #graphAxis(mg1)
+  mg1.Add(gr0E,"AP")
+  mg1.Add(gr0W,"AP")
+  mg1.Add(gr5E,"AP")
+  mg1.Add(gr5W,"AP")
   mg1.Draw("a")
-  mg1.SetTitle( 'Pseudorapidity Distribution')
+  mg1.SetTitle( 'RB1in')
   mg1.GetXaxis().SetTitle( '#eta' )
   mg1.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   mg1.SetMaximum(maxY)
+  mg1.GetXaxis().SetLabelFont(42)
+  mg1.GetXaxis().SetLabelOffset(0.007)
+  mg1.GetXaxis().SetLabelSize(0.043)
+  mg1.GetXaxis().SetTitleSize(0.05)
+  mg1.GetXaxis().SetTitleOffset(1.06)
+  mg1.GetXaxis().SetTitleFont(42)
+  mg1.GetYaxis().SetLabelFont(42)
+  mg1.GetYaxis().SetLabelOffset(0.008)
+  mg1.GetYaxis().SetLabelSize(0.05)
+  mg1.GetYaxis().SetTitleSize(0.06)
+  mg1.GetYaxis().SetTitleOffset(0.87)
+  mg1.GetYaxis().SetTitleFont(42)
+
+  pvtxt = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pvtxt.AddText('CMS Preliminary')
+  pvtxt.SetFillStyle(0)
+  pvtxt.SetBorderSize(0)
+  pvtxt.SetTextSize(0.03)
+  pvtxt.Draw()
+  pvtxt1 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pvtxt1.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt1.SetFillStyle(0)
+  pvtxt1.SetBorderSize(0)
+  pvtxt1.SetTextSize(0.03)
+  pvtxt1.Draw()
+
 
   canv.cd(2)
+  gr00 = TGraph()
+  gr00.SetMarkerColor( kBlack )
+  gr00.SetMarkerStyle( 20 )
+  gr00.SetMarkerSize( 1.5 )
+  gr01 = TGraph()
+  gr01.SetMarkerColor( kBlack )
+  gr01.SetMarkerStyle( 24 )
+  gr01.SetMarkerSize( 1.5 )
+
+  legend0 = TLegend(0.2, 0.7, .8, .9)
+  legend0.SetNColumns(1)
+  legend0.AddEntry(gr00, "Barrel", "p")
+  legend0.AddEntry(gr01, "Endcaps", "p")
+  legend0.Draw("a same")
+
+  legend = TLegend(0.2, 0.2, .8, .6)
+  legend.SetNColumns(2)
+  legend.AddEntry(gr5W, "RB1in  + RE1", "p")
+  legend.AddEntry(gr6W, "RB1out + RE1", "p")
+  legend.AddEntry(gr7W, "RB2 + RE2", "p")
+  legend.AddEntry(gr8W, "RB3 + RE3", "p")
+  legend.AddEntry(gr9W, "RB4 + RE4", "p")
+  legend.SetTextSize(0.05)
+  legend.Draw("a");
+
+  canv.cd(3)
   mg2 = TMultiGraph()
-  mg2.Add(gr2,"AP")
-  mg2.Add(gr6,"AP")
-  mg2.Add(gr10,"AP")
-  mg2.Add(gr14,"AP")
+  mg2.Add(gr1E,"AP")
+  mg2.Add(gr1W,"AP")
+  mg2.Add(gr6E,"AP")
+  mg2.Add(gr6W,"AP")
   mg2.Draw("a")
-  mg2.SetTitle( 'Pseudorapidity Distribution')
+  mg2.SetTitle( 'RB1out')
   mg2.GetXaxis().SetTitle( '#eta' )
   mg2.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   mg2.SetMaximum(maxY)
+  mg2.GetXaxis().SetLabelFont(42)
+  mg2.GetXaxis().SetLabelOffset(0.007)
+  mg2.GetXaxis().SetLabelSize(0.043)
+  mg2.GetXaxis().SetTitleSize(0.05)
+  mg2.GetXaxis().SetTitleOffset(1.06)
+  mg2.GetXaxis().SetTitleFont(42)
+  mg2.GetYaxis().SetLabelFont(42)
+  mg2.GetYaxis().SetLabelOffset(0.008)
+  mg2.GetYaxis().SetLabelSize(0.05)
+  mg2.GetYaxis().SetTitleSize(0.06)
+  mg2.GetYaxis().SetTitleOffset(0.87)
+  mg2.GetYaxis().SetTitleFont(42)
 
-  canv.cd(3)
+  pvtxt3 = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pvtxt3.AddText('CMS Preliminary')
+  pvtxt3.SetFillStyle(0)
+  pvtxt3.SetBorderSize(0)
+  pvtxt3.SetTextSize(0.03)
+  pvtxt3.Draw()
+  pvtxt4 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pvtxt4.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt4.SetFillStyle(0)
+  pvtxt4.SetBorderSize(0)
+  pvtxt4.SetTextSize(0.03)
+  pvtxt4.Draw()
+
+  canv.cd(4)
   mg3 = TMultiGraph()
-  mg3.Add(gr3,"AP")
-  mg3.Add(gr7,"AP")
-  mg3.Add(gr11,"AP")
-  mg3.Add(gr15,"AP")
+  #graphAxis(mg3)
+  mg3.Add(gr2E,"AP")
+  mg3.Add(gr2W,"AP")
+  mg3.Add(gr7E,"AP")
+  mg3.Add(gr7W,"AP")
   mg3.Draw("a")
-  mg3.SetTitle( 'Pseudorapidity Distribution')
+  mg3.SetTitle( 'RB2')
   mg3.GetXaxis().SetTitle( '#eta' )
   mg3.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   mg3.SetMaximum(maxY)
+  mg3.GetXaxis().SetLabelFont(42)
+  mg3.GetXaxis().SetLabelOffset(0.007)
+  mg3.GetXaxis().SetLabelSize(0.043)
+  mg3.GetXaxis().SetTitleSize(0.05)
+  mg3.GetXaxis().SetTitleOffset(1.06)
+  mg3.GetXaxis().SetTitleFont(42)
+  mg3.GetYaxis().SetLabelFont(42)
+  mg3.GetYaxis().SetLabelOffset(0.008)
+  mg3.GetYaxis().SetLabelSize(0.05)
+  mg3.GetYaxis().SetTitleSize(0.06)
+  mg3.GetYaxis().SetTitleOffset(0.87)
+  mg3.GetYaxis().SetTitleFont(42)
 
-  legend0 = TLegend(0.3, 0.7, .68, .9)
-  legend0.SetNColumns(1)
-  legend0.AddEntry(gr3, "Filled = Barrel", "p")
-  legend0.AddEntry(gr7, "Open = Endcaps", "p")
-  legend0.Draw("a same")
+  pvtxt5 = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pvtxt5.AddText('CMS Preliminary')
+  pvtxt5.SetFillStyle(0)
+  pvtxt5.SetBorderSize(0)
+  pvtxt5.SetTextSize(0.03)
+  pvtxt5.Draw()
+  pvtxt6 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pvtxt6.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt6.SetFillStyle(0)
+  pvtxt6.SetBorderSize(0)
+  pvtxt6.SetTextSize(0.03)
+  pvtxt6.Draw()
 
-  canv.cd(4)
+  canv.cd(5)
   mg4 = TMultiGraph()
-  mg4.Add(gr4,"AP")
-  mg4.Add(gr8,"AP")
-  mg4.Add(gr12,"AP")
-  mg4.Add(gr16,"AP")
+  #graphAxis(mg4)
+  mg4.Add(gr3E,"AP")
+  mg4.Add(gr3W,"AP")
+  mg4.Add(gr8E,"AP")
+  mg4.Add(gr8W,"AP")
   mg4.Draw("a")
-  mg4.SetTitle( 'Pseudorapidity Distribution')
+  mg4.SetTitle( 'RB3')
   mg4.GetXaxis().SetTitle( '#eta' )
   mg4.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   mg4.SetMaximum(maxY)
+  mg4.GetXaxis().SetLabelFont(42)
+  mg4.GetXaxis().SetLabelOffset(0.007)
+  mg4.GetXaxis().SetLabelSize(0.043)
+  mg4.GetXaxis().SetTitleSize(0.05)
+  mg4.GetXaxis().SetTitleOffset(1.06)
+  mg4.GetXaxis().SetTitleFont(42)
+  mg4.GetYaxis().SetLabelFont(42)
+  mg4.GetYaxis().SetLabelOffset(0.008)
+  mg4.GetYaxis().SetLabelSize(0.05)
+  mg4.GetYaxis().SetTitleSize(0.06)
+  mg4.GetYaxis().SetTitleOffset(0.87)
+  mg4.GetYaxis().SetTitleFont(42)
 
-  legend = TLegend(0.3, 0.7, .68, .9)
-  legend.SetNColumns(1)
-  legend.AddEntry(gr1, "Layer 1", "p")
-  legend.AddEntry(gr2, "Layer 2", "p")
-  legend.AddEntry(gr3, "Layer 3", "p")
-  legend.AddEntry(gr4, "Layer 4", "p")
-  legend.Draw("a");  
-  #canv.BuildLegend(0.3,0.7,0.68,0.9)
+  pvtxt7 = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pvtxt7.AddText('CMS Preliminary')
+  pvtxt7.SetFillStyle(0)
+  pvtxt7.SetBorderSize(0)
+  pvtxt7.SetTextSize(0.03)
+  pvtxt7.Draw()
+  pvtxt8 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pvtxt8.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt8.SetFillStyle(0)
+  pvtxt8.SetBorderSize(0)
+  pvtxt8.SetTextSize(0.03)
+  pvtxt8.Draw()
+
+
+  canv.cd(6)
+  mg5 = TMultiGraph()
+  #graphAxis(mg5)
+  mg5.Add(gr4E,"AP")
+  mg5.Add(gr4W,"AP")
+  mg5.Add(gr9E,"AP")
+  mg5.Add(gr9W,"AP")
+  mg5.Draw("a")
+  mg5.SetTitle( 'RB4')
+  mg5.GetXaxis().SetTitle( '#eta' )
+  mg5.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  mg5.SetMaximum(maxY)
+  mg5.GetXaxis().SetLabelFont(42)
+  mg5.GetXaxis().SetLabelOffset(0.007)
+  mg5.GetXaxis().SetLabelSize(0.043)
+  mg5.GetXaxis().SetTitleSize(0.05)
+  mg5.GetXaxis().SetTitleOffset(1.06)
+  mg5.GetXaxis().SetTitleFont(42)
+  mg5.GetYaxis().SetLabelFont(42)
+  mg5.GetYaxis().SetLabelOffset(0.008)
+  mg5.GetYaxis().SetLabelSize(0.05)
+  mg5.GetYaxis().SetTitleSize(0.06)
+  mg5.GetYaxis().SetTitleOffset(0.87)
+  mg5.GetYaxis().SetTitleFont(42)
+
+  pvtxt10 = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pvtxt10.AddText('CMS Preliminary')
+  pvtxt10.SetFillStyle(0)
+  pvtxt10.SetBorderSize(0)
+  pvtxt10.SetTextSize(0.03)
+  pvtxt10.Draw()
+  pvtxt9 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pvtxt9.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt9.SetFillStyle(0)
+  pvtxt9.SetBorderSize(0)
+  pvtxt9.SetTextSize(0.03)
+  pvtxt9.Draw()
 
   canv.SaveAs("etaDistro.gif")
 
 if __name__ == "__main__":
-  endcapSectionList = ["RE-1", "RE-2", "RE-3", "RE-4", "RE+1", "RE+2", "RE+3", "RE+4"]
-  wheelSectionList  = ["RB1", "RB2", "RB3", "RB4", "RB1", "RB2", "RB3", "RB4"]
-  wheelSectionList0 = ["-", "-", "-", "-", "+", "+", "+", "+"]
+  endcapSectionList = ["RE-1", "RE-1", "RE-2", "RE-3", "RE-4", "RE+1", "RE+1","RE+2", "RE+3", "RE+4"]
+  wheelSectionList  = ["RB1in", "RB1out", "RB2", "RB3", "RB4", "RB1in", "RB1out", "RB2", "RB3", "RB4"]
+  wheelSectionList0 = ["-", "-", "-", "-", "-", "+", "+", "+", "+", "+"]
   endcapSection = "RE+4"
   wheelSection  = "RB4"
   wheelSection0 = "-"
@@ -539,15 +763,18 @@ if __name__ == "__main__":
           endcapSection = str(arg)
       elif opt in ("-o", "--ofile"):
           wheelSection = str(arg)
-  xW, yW = [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]
-  xE, yE = [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]
-  for i in range(8):
+  xW, yW = [0,0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0,0]
+  xE, yE = [0,0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0,0]
+  for i in range(len(xW)):
     endcapSection = endcapSectionList[i]
     wheelSection  = wheelSectionList[i]
     wheelSection0 = wheelSectionList0[i]
     xW[i], yW[i], xE[i], yE[i] = main()
 
-  eta_plot(xW[0],yW[0],xW[1],yW[1],xW[2],yW[2],xW[3],yW[3],xW[4],yW[4],xW[5],yW[5],xW[6],yW[6],xW[7],yW[7],
-           xE[0],yE[0],xE[1],yE[1],xE[2],yE[2],xE[3],yE[3],xE[4],yE[4],xE[5],yE[5],xE[6],yE[6],xE[7],yE[7])
+  eta_plot(xW[0],yW[0],xW[1],yW[1],xW[2],yW[2],xW[3],yW[3],xW[4],yW[4],
+           xW[5],yW[5],xW[6],yW[6],xW[7],yW[7],xW[8],yW[8],xW[9],yW[9],
+           xE[0],yE[0],xE[1],yE[1],xE[2],yE[2],xE[3],yE[3],xE[4],yE[4],
+           xE[5],yE[5],xE[6],yE[6],xE[7],yE[7],xE[8],yE[8],xE[9],yE[9])
+  
   
 
