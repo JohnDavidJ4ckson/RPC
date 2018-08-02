@@ -14,6 +14,7 @@ from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 
+
 def is_number(s):
     try:
         float(s)
@@ -296,8 +297,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   gr1W.SetLineColor( 2 )
   gr1W.SetLineWidth( 4 )
   gr1W.SetMarkerColor( kRed+2 )
-  gr1W.SetMarkerStyle( 20 )
-  gr1W.SetMarkerSize( 1.5 )
+  gr1W.SetMarkerStyle( 29 )
+  gr1W.SetMarkerSize( 1.7 )
   gr1W.SetTitle( 'Layer 1 Wheel' )
   gr1W.GetXaxis().SetTitle( '#eta' )
   gr1W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
@@ -352,7 +353,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   gr1E.SetLineColor( 2 )
   gr1E.SetLineWidth( 4 )
   gr1E.SetMarkerColor( kRed+2 )
-  gr1E.SetMarkerStyle( 24 )
+  gr1E.SetMarkerStyle( 30 )
   gr1E.SetMarkerSize( 1.5 )
   gr1E.SetTitle( 'Layer 1 Endcap' )
   gr1E.GetXaxis().SetTitle( '#eta' )
@@ -408,8 +409,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   gr6W.SetLineColor( 3 )
   gr6W.SetLineWidth( 5 )
   gr6W.SetMarkerColor( kRed+2 )
-  gr6W.SetMarkerStyle( 20 )
-  gr6W.SetMarkerSize( 1.5 )
+  gr6W.SetMarkerStyle( 29 )
+  gr6W.SetMarkerSize( 1.7 )
   gr6W.SetTitle( 'Layer 2 Wheel')
   gr6W.GetXaxis().SetTitle( '#eta' )
   gr6W.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
@@ -464,7 +465,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   gr6E.SetLineColor( 3 )
   gr6E.SetLineWidth( 5 )
   gr6E.SetMarkerColor( kRed+2 )
-  gr6E.SetMarkerStyle( 24 )
+  gr6E.SetMarkerStyle( 30 )
   gr6E.SetMarkerSize( 1.5 )
   gr6E.SetTitle( 'Layer 2 Endcap')
   gr6E.GetXaxis().SetTitle( '#eta' )
@@ -561,7 +562,6 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   pvtxt1.SetBorderSize(0)
   pvtxt1.SetTextSize(0.03)
   pvtxt1.Draw()
-
 
   canv.cd(2)
   gr00 = TGraph()
@@ -742,6 +742,72 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   pvtxt9.Draw()
 
   canv.SaveAs("etaDistro.gif")
+
+  print "----- Creating Second TCanvas -----"
+  H = 800
+  W = 800
+  c = TCanvas("c1", "Canvas",50,50,W,H)
+  c.SetFillColor(0)
+  c.SetBorderMode(0)
+  c.SetFrameFillStyle(0)
+  c.SetFrameBorderMode(0)
+  c.SetLeftMargin( L/W )
+  c.SetRightMargin( R/W )
+  c.SetTopMargin( T/H )
+  c.SetBottomMargin( B/H )
+  c.SetTickx(0)
+  c.SetTicky(0)
+
+  print " ------------ Creating TMultiGraph -----------"
+  mg = TMultiGraph()
+  mg.Add(gr0E,"AP")
+  mg.Add(gr0W,"AP")
+  mg.Add(gr5E,"AP")
+  mg.Add(gr5W,"AP")
+  mg.Add(gr1W,"AP")
+  mg.Add(gr6W,"AP")
+  mg.Draw("a")
+  mg.SetTitle( 'RB1in')
+  mg.GetXaxis().SetTitle( '#eta' )
+  mg.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  mg.SetMaximum(maxY)
+  mg.GetXaxis().SetLabelFont(42)
+  mg.GetXaxis().SetLabelOffset(0.007)
+  mg.GetXaxis().SetLabelSize(0.043)
+  mg.GetXaxis().SetTitleSize(0.05)
+  mg.GetXaxis().SetTitleOffset(1.06)
+  mg.GetXaxis().SetTitleFont(42)
+  mg.GetYaxis().SetLabelFont(42)
+  mg.GetYaxis().SetLabelOffset(0.008)
+  mg.GetYaxis().SetLabelSize(0.05)
+  mg.GetYaxis().SetTitleSize(0.06)
+  mg.GetYaxis().SetTitleOffset(0.87)
+  mg.GetYaxis().SetTitleFont(42)
+
+  pvtxt = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pvtxt.AddText('CMS Preliminary')
+  pvtxt.SetFillStyle(0)
+  pvtxt.SetBorderSize(0)
+  pvtxt.SetTextSize(0.03)
+  pvtxt.Draw()
+  pvtxt1 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pvtxt1.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt1.SetFillStyle(0)
+  pvtxt1.SetBorderSize(0)
+  pvtxt1.SetTextSize(0.03)
+  pvtxt1.Draw()
+
+  legend = TLegend(0.2, 0.6, .8, .9)
+  legend.SetNColumns(1)
+  legend.AddEntry(gr0E, "RE1", "p")
+  legend.AddEntry(gr0W, "RB1in", "p")
+  legend.AddEntry(gr1W, "RB1out", "p")
+  legend.SetTextSize(0.05)
+  legend.Draw("a");
+
+  c.SaveAs("etaDistroDetail.gif")
+  
+
 
 if __name__ == "__main__":
   endcapSectionList = ["RE-1", "RE-1", "RE-2", "RE-3", "RE-4", "RE+1", "RE+1","RE+2", "RE+3", "RE+4"]
