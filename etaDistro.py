@@ -522,9 +522,10 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   CMS_lumi.CMS_lumi(canv, iPeriod, iPos)
   canv.cd()
   canv.Update()
-  maxY = 20
+  maxY = 100
 
   canv.cd(1)
+  gPad.SetLogy()
   print " ------------ Creating TMultiGraph -----------"
   mg1 = TMultiGraph()
   #graphAxis(mg1)
@@ -564,6 +565,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   pvtxt1.Draw()
 
   canv.cd(2)
+  gPad.SetLogy()
   gr00 = TGraph()
   gr00.SetMarkerColor( kBlack )
   gr00.SetMarkerStyle( 20 )
@@ -590,6 +592,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   legend.Draw("a");
 
   canv.cd(3)
+  gPad.SetLogy()
   mg2 = TMultiGraph()
   mg2.Add(gr1E,"AP")
   mg2.Add(gr1W,"AP")
@@ -627,6 +630,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   pvtxt4.Draw()
 
   canv.cd(4)
+  gPad.SetLogy()
   mg3 = TMultiGraph()
   #graphAxis(mg3)
   mg3.Add(gr2E,"AP")
@@ -665,6 +669,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   pvtxt6.Draw()
 
   canv.cd(5)
+  gPad.SetLogy()
   mg4 = TMultiGraph()
   #graphAxis(mg4)
   mg4.Add(gr3E,"AP")
@@ -704,6 +709,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
 
 
   canv.cd(6)
+  gPad.SetLogy()
   mg5 = TMultiGraph()
   #graphAxis(mg5)
   mg5.Add(gr4E,"AP")
@@ -757,6 +763,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   c.SetBottomMargin( B/H )
   c.SetTickx(0)
   c.SetTicky(0)
+  c.SetLogy()
 
   print " ------------ Creating TMultiGraph -----------"
   mg = TMultiGraph()
@@ -797,7 +804,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W,Y3W,X4W,Y4W,X5W,Y5W,X6W,Y6W,X7W,Y7W,X8W
   pvtxt1.SetTextSize(0.03)
   pvtxt1.Draw()
 
-  legend = TLegend(0.2, 0.6, .8, .9)
+  legend = TLegend(0.4, 0.6, .8, .9)
   legend.SetNColumns(1)
   legend.AddEntry(gr0E, "RE1", "p")
   legend.AddEntry(gr0W, "RB1in", "p")
