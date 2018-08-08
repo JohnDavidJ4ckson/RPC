@@ -14,7 +14,6 @@ from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 
-
 def is_number(s):
     try:
         float(s)
@@ -23,7 +22,7 @@ def is_number(s):
         return False
 
 def ratesEndcap_list():
-  runNumfile = "data.json" #"output_rolls2018.json"
+  runNumfile = "ratesAt5.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   rolls = ["_A","_B","_C"] #, "_D"]
@@ -42,8 +41,8 @@ def ratesEndcap_list():
       for c in chambers:
         try:
           #print r
-          if float(rates1["rates"][endcapSection+r+"_CH"+c+roll]["ratesquarecm"]) == 0: continue
-          rates.append(float(rates1["rates"][endcapSection+r+"_CH"+c+roll]["ratesquarecm"]))
+          if float(rates1[endcapSection+r+"_CH"+c+roll]) == 0: continue
+          rates.append(float(rates1[endcapSection+r+"_CH"+c+roll]))
           names.append(endcapSection+r+"_CH"+c+roll)
         except KeyError:
           continue
@@ -51,7 +50,7 @@ def ratesEndcap_list():
   return [names, rates]
 
 def ratesWheel_lists():
-  runNumfile = "data.json" #"output_rolls2018.json"
+  runNumfile = "ratesAt5.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   wheels = ["0", "1", "2"]
@@ -69,8 +68,8 @@ def ratesWheel_lists():
   rates = []
   for p in parameters:
     try:
-      if float(rates1["rates"][p]["ratesquarecm"]) == 0: continue
-      rates.append(float(rates1["rates"][p]["ratesquarecm"]))
+      if float(rates1[p]) == 0: continue
+      rates.append(float(rates1[p]))
       names.append(p)
     except KeyError:
       continue
@@ -78,7 +77,7 @@ def ratesWheel_lists():
 
 def etaWheel_lists():
   lines = []
-  with open('WGeometry.out', 'rw') as shakes:
+  with open('../WGeometry.out', 'rw') as shakes:
     for line in shakes:
       y = line.split(" glob(X,Y,Z)")
       lines.append(y)
@@ -269,7 +268,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
 
   iPos = 11
   if( iPos==0 ): CMS_lumi.relPosX = 0.12
-         
+
   H_ref = 600;
   W_ref = 800;
   W = W_ref  
@@ -297,7 +296,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr1W.SetLineColor( 2 )
   gr1W.SetLineWidth( 4 )
   gr1W.SetMarkerColor( kBlue )
-  gr1W.SetMarkerStyle( 22 )
+  gr1W.SetMarkerStyle( 29 )
   gr1W.SetMarkerSize( 1.7 )
   gr1W.SetTitle( 'Layer 1 Wheel' )
   gr1W.GetXaxis().SetTitle( '#eta' )
@@ -307,8 +306,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr2W = TGraph(n2W,X2W,Y2W)
   gr2W.SetLineColor( 3 )
   gr2W.SetLineWidth( 5 )
-  gr2W.SetMarkerColor( kRed )
-  gr2W.SetMarkerStyle( 33 )
+  gr2W.SetMarkerColor( kRed+2 )
+  gr2W.SetMarkerStyle( 21 )
   gr2W.SetMarkerSize( 1.5 )
   gr2W.SetTitle( 'Layer 2 Wheel') 
   gr2W.GetXaxis().SetTitle( '#eta' )
@@ -353,7 +352,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr1E.SetLineColor( 2 )
   gr1E.SetLineWidth( 4 )
   gr1E.SetMarkerColor( kBlue )
-  gr1E.SetMarkerStyle( 26 )
+  gr1E.SetMarkerStyle( 30 )
   gr1E.SetMarkerSize( 1.5 )
   gr1E.SetTitle( 'Layer 1 Endcap' )
   gr1E.GetXaxis().SetTitle( '#eta' )
@@ -363,8 +362,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr2E = TGraph(n2E,X2E,Y2E)
   gr2E.SetLineColor( 3 )
   gr2E.SetLineWidth( 5 )
-  gr2E.SetMarkerColor( kRed )
-  gr2E.SetMarkerStyle( 27 )
+  gr2E.SetMarkerColor( kRed+2 )
+  gr2E.SetMarkerStyle( 25 )
   gr2E.SetMarkerSize( 1.5 )
   gr2E.SetTitle( 'Layer 2 Endcap')
   gr2E.GetXaxis().SetTitle( '#eta' )
@@ -397,8 +396,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr5W = TGraph(n5W,X5W,Y5W)
   gr5W.SetLineColor( 2 )
   gr5W.SetLineWidth( 4 )
-  gr5W.SetMarkerColor( kRed )
-  gr5W.SetMarkerStyle( 47 )
+  gr5W.SetMarkerColor( 6 )
+  gr5W.SetMarkerStyle( 22 )
   gr5W.SetMarkerSize( 1.5 )
   gr5W.SetTitle( 'Layer 1 Wheel' )
   gr5W.GetXaxis().SetTitle( '#eta' )
@@ -408,8 +407,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr6W = TGraph(n6W,X6W,Y6W)
   gr6W.SetLineColor( 3 )
   gr6W.SetLineWidth( 5 )
-  gr6W.SetMarkerColor( kRed )
-  gr6W.SetMarkerStyle( 29 )
+  gr6W.SetMarkerColor( 28 )
+  gr6W.SetMarkerStyle( 23 )
   gr6W.SetMarkerSize( 1.7 )
   gr6W.SetTitle( 'Layer 2 Wheel')
   gr6W.GetXaxis().SetTitle( '#eta' )
@@ -431,7 +430,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr8W.SetLineColor( 5 )
   gr8W.SetLineWidth( 7 )
   gr8W.SetMarkerColor( kBlue )
-  gr8W.SetMarkerStyle( 22 )
+  gr8W.SetMarkerStyle( 29 )
   gr8W.SetMarkerSize( 1.5 )
   gr8W.SetTitle( 'Layer 4 Wheel' )
   gr8W.GetXaxis().SetTitle( '#eta' )
@@ -441,8 +440,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr9W = TGraph(n9W,X9W,Y9W)
   gr9W.SetLineColor( 5 )
   gr9W.SetLineWidth( 7 )
-  gr9W.SetMarkerColor( kRed )
-  gr9W.SetMarkerStyle( 33 )
+  gr9W.SetMarkerColor( kRed+2 )
+  gr9W.SetMarkerStyle( 21 )
   gr9W.SetMarkerSize( 1.5 )
   gr9W.SetTitle( 'Layer 4 Wheel' )
   gr9W.GetXaxis().SetTitle( '#eta' )
@@ -474,8 +473,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr12W = TGraph(n12W,X12W,Y12W)
   gr12W.SetLineColor( 5 )
   gr12W.SetLineWidth( 7 )
-  gr12W.SetMarkerColor( kRed )
-  gr12W.SetMarkerStyle( 47 )
+  gr12W.SetMarkerColor( 6 )
+  gr12W.SetMarkerStyle( 22 )
   gr12W.SetMarkerSize( 1.5 )
   gr12W.SetTitle( 'Layer 4 Wheel' )
   gr12W.GetXaxis().SetTitle( '#eta' )
@@ -485,8 +484,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr13W = TGraph(n13W,X13W,Y13W)
   gr13W.SetLineColor( 5 )
   gr13W.SetLineWidth( 7 )
-  gr13W.SetMarkerColor( kRed )
-  gr13W.SetMarkerStyle( 29 )
+  gr13W.SetMarkerColor( 28 )
+  gr13W.SetMarkerStyle( 23 )
   gr13W.SetMarkerSize( 1.5 )
   gr13W.SetTitle( 'Layer 4 Wheel' )
   gr13W.GetXaxis().SetTitle( '#eta' )
@@ -498,8 +497,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr5E = TGraph(n5E,X5E,Y5E)
   gr5E.SetLineColor( 2 )
   gr5E.SetLineWidth( 4 )
-  gr5E.SetMarkerColor( kRed )
-  gr5E.SetMarkerStyle( 46 )
+  gr5E.SetMarkerColor( 6 )
+  gr5E.SetMarkerStyle( 26 )
   gr5E.SetMarkerSize( 1.5 )
   gr5E.SetTitle( 'Layer 1 Endcap' )
   gr5E.GetXaxis().SetTitle( '#eta' )
@@ -509,8 +508,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr6E = TGraph(n6E,X6E,Y6E)
   gr6E.SetLineColor( 3 )
   gr6E.SetLineWidth( 5 )
-  gr6E.SetMarkerColor( kRed )
-  gr6E.SetMarkerStyle( 30 )
+  gr6E.SetMarkerColor( 28 )
+  gr6E.SetMarkerStyle( 32 )
   gr6E.SetMarkerSize( 1.5 )
   gr6E.SetTitle( 'Layer 2 Endcap')
   gr6E.GetXaxis().SetTitle( '#eta' )
@@ -532,7 +531,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr8E.SetLineColor( 5 )
   gr8E.SetLineWidth( 7 )
   gr8E.SetMarkerColor( kBlue )
-  gr8E.SetMarkerStyle( 26 )
+  gr8E.SetMarkerStyle( 30 )
   gr8E.SetMarkerSize( 1.5 )
   gr8E.SetTitle( 'Layer 4 Endcap' )
   gr8E.GetXaxis().SetTitle( '#eta' )
@@ -542,8 +541,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr9E = TGraph(n9E,X9E,Y9E)
   gr9E.SetLineColor( 5 )
   gr9E.SetLineWidth( 7 )
-  gr9E.SetMarkerColor( kRed )
-  gr9E.SetMarkerStyle( 27 )
+  gr9E.SetMarkerColor( kRed+2 )
+  gr9E.SetMarkerStyle( 25 )
   gr9E.SetMarkerSize( 1.5 )
   gr9E.SetTitle( 'Layer 4 Endcap' )
   gr9E.GetXaxis().SetTitle( '#eta' )
@@ -575,8 +574,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr12E = TGraph(n12E,X12E,Y12E)
   gr12E.SetLineColor( 5 )
   gr12E.SetLineWidth( 7 )
-  gr12E.SetMarkerColor( kRed )
-  gr12E.SetMarkerStyle( 46 )
+  gr12E.SetMarkerColor( 6 )
+  gr12E.SetMarkerStyle( 26 )
   gr12E.SetMarkerSize( 1.5 )
   gr12E.SetTitle( 'Layer 4 Endcap' )
   gr12E.GetXaxis().SetTitle( '#eta' )
@@ -586,15 +585,15 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr13E = TGraph(n13E,X13E,Y13E)
   gr13E.SetLineColor( 5 )
   gr13E.SetLineWidth( 7 )
-  gr13E.SetMarkerColor( kRed )
-  gr13E.SetMarkerStyle( 30 )
+  gr13E.SetMarkerColor( 28 )
+  gr13E.SetMarkerStyle( 32 )
   gr13E.SetMarkerSize( 1.5 )
   gr13E.SetTitle( 'Layer 4 Endcap' )
   gr13E.GetXaxis().SetTitle( '#eta' )
   gr13E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
   print "----- Creating TCanvas -----"
-  H = 1600
+  H = 800
   W = 1600
   canv = TCanvas("c1", "Canvas",50,50,W,H)
   canv.SetFillColor(0)
@@ -611,7 +610,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   CMS_lumi.CMS_lumi(canv, iPeriod, iPos)
   canv.cd()
   canv.Update()
-  maxY = 100
+  maxY = 1000
 
   canv.cd(1)
   gPad.SetLogy()
@@ -646,12 +645,12 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt.SetBorderSize(0)
   pvtxt.SetTextSize(0.03)
   pvtxt.Draw()
-  pvtxt1 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt1.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
-  pvtxt1.SetFillStyle(0)
-  pvtxt1.SetBorderSize(0)
-  pvtxt1.SetTextSize(0.03)
-  pvtxt1.Draw()
+  pvtxt100 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pvtxt100.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pvtxt100.SetFillStyle(0)
+  pvtxt100.SetBorderSize(0)
+  pvtxt100.SetTextSize(0.03)
+  pvtxt100.Draw()
 
   canv.cd(2)
   gPad.SetLogy()
@@ -671,12 +670,12 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legend0.Draw("a same")
 
   legendi = TLegend(0.2, 0.2, .8, .6)
-  legendi.SetNColumns(2)
+  legendi.SetNColumns(1)
   legendi.AddEntry(gr7W,  "RB1in  + RE1" , "p")
   legendi.AddEntry(gr8W,  "RB1out + RE1" , "p")
   legendi.AddEntry(gr9W,  "RB2 + RE2"    , "p")
-  legendi.AddEntry(gr10W, "RB2in  + RE2" , "p")
-  legendi.AddEntry(gr11W, "RB2out + RE2" , "p")
+#  legendi.AddEntry(gr10W, "RB2in  + RE2" , "p")
+#  legendi.AddEntry(gr11W, "RB2out + RE2" , "p")
   legendi.AddEntry(gr12W, "RB3 + RE3"    , "p")
   legendi.AddEntry(gr13W, "RB4 + RE4"    , "p")
   legendi.SetTextSize(0.05)
@@ -714,7 +713,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt3.SetTextSize(0.03)
   pvtxt3.Draw()
   pvtxt4 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt4.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt4.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt4.SetFillStyle(0)
   pvtxt4.SetBorderSize(0)
   pvtxt4.SetTextSize(0.03)
@@ -753,7 +752,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt5.SetTextSize(0.03)
   pvtxt5.Draw()
   pvtxt6 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt6.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt6.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt6.SetFillStyle(0)
   pvtxt6.SetBorderSize(0)
   pvtxt6.SetTextSize(0.03)
@@ -792,7 +791,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt7.SetTextSize(0.03)
   pvtxt7.Draw()
   pvtxt8 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt8.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt8.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt8.SetFillStyle(0)
   pvtxt8.SetBorderSize(0)
   pvtxt8.SetTextSize(0.03)
@@ -831,7 +830,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt10.SetTextSize(0.03)
   pvtxt10.Draw()
   pvtxt9 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt9.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvtxt9.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt9.SetFillStyle(0)
   pvtxt9.SetBorderSize(0)
   pvtxt9.SetTextSize(0.03)
@@ -889,13 +888,13 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvt.SetTextSize(0.03)
   pvt.Draw()
   pvt1 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvt1.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pvt1.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvt1.SetFillStyle(0)
   pvt1.SetBorderSize(0)
   pvt1.SetTextSize(0.03)
   pvt1.Draw()
 
-  legenda = TLegend(0.4, 0.6, .8, .9)
+  legenda = TLegend(0.4, 0.7, .7, .9)
   legenda.SetNColumns(1)
   legenda.AddEntry(gr0E, "RE1", "p")
   legenda.AddEntry(gr0W, "RB1in", "p")
@@ -953,13 +952,13 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pv.SetTextSize(0.03)
   pv.Draw()
   pv1 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pv1.AddText('4.8 #times 10^{33} Hz/cm^{2} (13 TeV)')
+  pv1.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pv1.SetFillStyle(0)
   pv1.SetBorderSize(0)
   pv1.SetTextSize(0.03)
   pv1.Draw()
 
-  legendd2 = TLegend(0.4, 0.6, .8, .9)
+  legendd2 = TLegend(0.4, 0.6, .7, .8)
   legendd2.SetNColumns(1)
   legendd2.AddEntry(gr3E, "RE2", "p")
   legendd2.AddEntry(gr3W, "RB2in", "p")
