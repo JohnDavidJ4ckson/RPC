@@ -14,6 +14,8 @@ from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 
+## Value -> Boolean
+## This function returns True if the given object is a number
 def is_number(s):
     try:
         float(s)
@@ -21,6 +23,11 @@ def is_number(s):
     except ValueError:
         return False
 
+## Null -> List of lists [string, double]
+## The function uses a fixed json file to return a list of lists with 
+## RPC Id names in the first entry and the corresponding rates in 
+## the second entry. The IDnames are createad as they would correspond
+## to RPC in the Endcap section.
 def ratesEndcap_list():
   runNumfile = "ratesAt7p5.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
@@ -49,6 +56,11 @@ def ratesEndcap_list():
   #print sorted(names)
   return [names, rates]
 
+## Null -> List of lists [string, double]
+## The function uses a fixed json file to return a list of lists with 
+## RPC Id names in the first entry and the corresponding rates in 
+## the second entry. The IDnames are createad as they would correspond
+## to RPC in the Barrel section.
 def ratesWheel_lists():
   runNumfile = "ratesAt7p5.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
@@ -75,6 +87,10 @@ def ratesWheel_lists():
       continue
   return [names, rates]
 
+## Null ->  List of lists [string, double]
+## The function uses a fixed txt file with the geometric information
+## of the RPC's in the barrel and returns a list of names and their
+## corresponding pseudorapidity mean location.
 def etaWheel_lists():
   lines = []
   with open('WGeometry.out', 'rw') as shakes:
@@ -114,10 +130,13 @@ def etaWheel_lists():
     etaMax.append(eta2)
     avgEtaValue = ( eta1 + eta2 ) /2
     etaAvg.append(avgEtaValue)
-
   List = [name, etaAvg]
   return List
 
+## Null ->  List of lists [string, double]
+## The function uses a fixed txt file with the geometric information
+## of the RPC's in the endcaps and returns a list of names and their
+## corresponding pseudorapidity mean location.
 def etaEndcap_list():
   lines = []
   with open('file.out', 'rw') as shakes:
@@ -142,12 +161,12 @@ def etaEndcap_list():
   List = [name, etaAvg]
   return List
 
+## List of lists [string, double], 
+## List of lists [string, double]  -> Dictionary
+## The function maps the rates and pseudorapidities that share ID 
+## names to each other and returns them in a dictionary
 def intersect_list(etaList, ratesList):
   intersect = set(etaList[0]).intersection(ratesList[0])
-  #print len(intersect)
-  #newName  = []
-  #newEta   = []
-  #newRates = []
   dict0 = {}
   for i in intersect:
     etaIndex = etaList[0].index(i)
@@ -155,11 +174,12 @@ def intersect_list(etaList, ratesList):
     indict = { "eta": etaList[1][etaIndex],
                "rates":ratesList[1][rateIndex] }
     dict0[i] = indict
-    #newName.append(i)
-    #newEta.append(etaList[1][etaIndex])
-    #newRates.append(ratesList[1][rateIndex])
   return dict0
 
+## (0 or 1), Dictionary,
+## array, array, -> Null
+## The function fills the given X and Y arrays with the median 
+## (or average) over the chambers in the RPC subdivions of interest
 def average_chambers(wheel, dictionary, X, Y):
   if wheel == 1:
     wheels = ["0", "1", "2"]
@@ -216,42 +236,36 @@ def average_chambers(wheel, dictionary, X, Y):
           X.append( median(eta)   )  #sum(eta)/len(eta) )
           Y.append( median(rates) )  #sum(rates)/len(rates) )
 
+## Null -> array, array, array, array
+## The main function calls the creation of eta and rates lists
+## then maps them to each othar and takes the chamber median
+## (or average) to a set of four arrays that get returned.
+## Nomenclature: x - Eta
+##               y - Rates
+##               W - wheel
+##               E - endcap
 def main():
-  #if sys.argv[2]: print str(sys.argv[2])
   wheelEtaList = etaWheel_lists() #[names, eta] 
-  #print "eta Wheel List Done"
-  #print  len(wheelEtaList[0]), len(wheelEtaList[1])
   endcapEtaList = etaEndcap_list() #[names, eta] 
-  #print "endcap eta list Done"
-  #print  len(endcapEtaList[0]), len(endcapEtaList[1])
   wheelRatesList = ratesWheel_lists() #[names, rates]
-  #print "wheel rates list Done" 
-  #print len(wheelRatesList[0]), len(wheelRatesList[1])
   endcapRatesList = ratesEndcap_list() #[names, rates]
-  #print "endcap rates list Done" 
-  #print len(endcapRatesList[0]), len(endcapRatesList[1])
-
-  #print "This is the problem"
-  #print wheelEtaList
-  #print wheelRatesList
   wheelIntersect = intersect_list(wheelEtaList,wheelRatesList) #name{eta, rates}
-  #print "wheel eta/rate intersect Done"
   endcapIntersect = intersect_list(endcapEtaList,endcapRatesList) #name{eta, rates}
-  #print "endcap eta/rate intersect Done"
-
   xW, yW = array( 'd' ), array( 'd' )
   xE, yE = array( 'd' ), array( 'd' )
-
   average_chambers(1, wheelIntersect,  xW, yW)
-  #print "Wheel Average Done for "+ wheelSection
   average_chambers(0, endcapIntersect, xE, yE)
-  #print "endcap average Done for "+ endcapSection
-
-  #print len(xW), len(yW)
-  #print len(xE), len(yE)
-
   return xW, yW, xE, yE
 
+## 48 arrays -> Null
+## This function recieves 14 arrays for eta wheel, eta endcaps, 
+## rates wheel and rates endcap. The function creates 3 canvas.
+## On the first canvas 5 rate vs eta plots are presented for
+## sections RB1in, RB1out, RB2, RB3, and RB4 in the barrel and
+## RE1 (twice), RE2, RE3, and RE4 in the endcaps.
+## The second and third canvas's are comparisons between the inner
+## and outer parts of RB1 and RB2 respectively.
+## The canvas are saved to .gif and .png
 def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
              X7W,Y7W,X8W,Y8W,X9W,Y9W,X10W,Y10W,X11W,Y11W,X12W,Y12W,X13W,Y13W,
              X0E,Y0E,X1E,Y1E,X2E,Y2E,X3E, Y3E, X4E, Y4E, X5E, Y5E, X6E, Y6E,
@@ -970,7 +984,10 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   c1.Close() 
   
   print "is there an error here?"
+  return
 
+##
+##
 if __name__ == "__main__":
   endcapSectionList = ["RE-1", "RE-1", "RE-2", "RE-2", "RE-2", "RE-3", "RE-4", "RE+1", "RE+1","RE+2", "RE+2", "RE+2", "RE+3", "RE+4"]
   wheelSectionList  = ["RB1in", "RB1out", "RB2", "RB2in", "RB2out", "RB3", "RB4", "RB1in", "RB1out", "RB2", "RB2in", "RB2out", "RB3", "RB4"]
