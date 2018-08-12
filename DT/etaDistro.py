@@ -13,6 +13,7 @@ import numpy as np
 from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
+import generateDTTGraphs
 
 ## Value -> Boolean
 ## This function returns True if the given object is a number
@@ -29,7 +30,7 @@ def is_number(s):
 ## the second entry. The IDnames are createad as they would correspond
 ## to RPC in the Endcap section.
 def ratesEndcap_list():
-  runNumfile = "ratesAt7p5.json" #"output_rolls2018.json"
+  runNumfile = "ratesAt5.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   rolls = ["_A","_B","_C"] #, "_D"]
@@ -62,7 +63,7 @@ def ratesEndcap_list():
 ## the second entry. The IDnames are createad as they would correspond
 ## to RPC in the Barrel section.
 def ratesWheel_lists():
-  runNumfile = "ratesAt7p5.json" #"output_rolls2018.json"
+  runNumfile = "ratesAt5.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   wheels = ["0", "1", "2"]
@@ -609,7 +610,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   print "----- Creating TCanvas -----"
   H = 800
   W = 1600
-  canv = TCanvas("c1", "Canvas",50,50,W,H)
+  canv = TCanvas("canv", "Canvas",50,50,W,H)
   canv.SetFillColor(0)
   canv.SetBorderMode(0)
   canv.SetFrameFillStyle(0)
@@ -856,7 +857,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   print "----- Creating Second TCanvas -----"
   H = 800
   W = 800
-  c = TCanvas("c1", "Canvas",50,50,W,H)
+  c = TCanvas("c", "Canvas",50,50,W,H)
   c.SetFillColor(0)
   c.SetBorderMode(0)
   c.SetFrameFillStyle(0)
@@ -982,6 +983,272 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
 
   c1.SaveAs("etaDistroDetailRB2.png")
   c1.Close() 
+
+  print "----- Creating Third TCanvas -----"
+  c3 = TCanvas("c3", "Canvas",50,50,W,H)
+  c3.SetFillColor(0)
+  c3.SetBorderMode(0)
+  c3.SetFrameFillStyle(0)
+  c3.SetFrameBorderMode(0)
+  c3.SetLeftMargin( L/W )
+  c3.SetRightMargin( R/W )
+  c3.SetTopMargin( T/H )
+  c3.SetBottomMargin( B/H )
+  c3.SetTickx(0)
+  c3.SetTicky(0)
+  gPad.SetLogy()
+
+  print " ------------ Creating TMultiGraph -----------"
+  List = generateDTTGraphs.main()
+  print List
+
+  mgd3 = TMultiGraph()
+  mgd3.Add(gr3E,"AP")
+  mgd3.Add(gr3W,"AP")
+  mgd3.Add(gr10E,"AP")
+  mgd3.Add(gr10W,"AP")
+  mgd3.Add(gr4W,"AP")
+  mgd3.Add(gr11W,"AP")
+  mgd3.Add(List[1],"AP")
+  mgd3.Draw("a")
+  mgd3.SetTitle( 'RB1in')
+  mgd3.GetXaxis().SetTitle( '#eta' )
+  mgd3.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  mgd3.SetMaximum(maxY)
+  mgd3.GetXaxis().SetLabelFont(42)
+  mgd3.GetXaxis().SetLabelOffset(0.007)
+  mgd3.GetXaxis().SetLabelSize(0.043)
+  mgd3.GetXaxis().SetTitleSize(0.05)
+  mgd3.GetXaxis().SetTitleOffset(1.06)
+  mgd3.GetXaxis().SetTitleFont(42)
+  mgd3.GetYaxis().SetLabelFont(42)
+  mgd3.GetYaxis().SetLabelOffset(0.008)
+  mgd3.GetYaxis().SetLabelSize(0.05)
+  mgd3.GetYaxis().SetTitleSize(0.06)
+  mgd3.GetYaxis().SetTitleOffset(0.87)
+  mgd3.GetYaxis().SetTitleFont(42)
+
+  pv03 = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pv03.AddText('CMS Preliminary')
+  pv03.SetFillStyle(0)
+  pv03.SetBorderSize(0)
+  pv03.SetTextSize(0.03)
+  pv03.Draw()
+  pv103 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pv103.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pv103.SetFillStyle(0)
+  pv103.SetBorderSize(0)
+  pv103.SetTextSize(0.03)
+  pv103.Draw()
+
+  legendd3 = TLegend(0.4, 0.6, .7, .8)
+  legendd3.SetNColumns(1)
+  legendd3.AddEntry(gr3E, "RE2", "p")
+  legendd3.AddEntry(gr3W, "RB2in", "p")
+  legendd3.AddEntry(gr4W, "RB2out", "p")
+  legendd3.AddEntry(List[1], "MB2", "p")
+  legendd3.SetTextSize(0.05)
+  legendd3.Draw("a");
+
+  c3.SaveAs("etaDistroDetailRB2withDT.png")
+  c3.Close()
+
+  print "----- Creating Fourth TCanvas -----"
+  c4 = TCanvas("c4", "Canvas",50,50,W,H)
+  c4.SetFillColor(0)
+  c4.SetBorderMode(0)
+  c4.SetFrameFillStyle(0)
+  c4.SetFrameBorderMode(0)
+  c4.SetLeftMargin( L/W )
+  c4.SetRightMargin( R/W )
+  c4.SetTopMargin( T/H )
+  c4.SetBottomMargin( B/H )
+  c4.SetTickx(0)
+  c4.SetTicky(0)
+  gPad.SetLogy()
+
+  print " ------------ Creating TMultiGraph -----------"
+  mgd4 = TMultiGraph()
+  mgd4.Add(gr5E,"AP")
+  mgd4.Add(gr5W,"AP")
+  mgd4.Add(gr12E,"AP")
+  mgd4.Add(gr12W,"AP")
+  mgd4.Add(List[2],"AP")
+  mgd4.Draw("a")
+  mgd4.SetTitle( 'RB3')
+  mgd4.GetXaxis().SetTitle( '#eta' )
+  mgd4.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  mgd4.SetMaximum(maxY)
+  mgd4.GetXaxis().SetLabelFont(42)
+  mgd4.GetXaxis().SetLabelOffset(0.007)
+  mgd4.GetXaxis().SetLabelSize(0.043)
+  mgd4.GetXaxis().SetTitleSize(0.05)
+  mgd4.GetXaxis().SetTitleOffset(1.06)
+  mgd4.GetXaxis().SetTitleFont(42)
+  mgd4.GetYaxis().SetLabelFont(42)
+  mgd4.GetYaxis().SetLabelOffset(0.008)
+  mgd4.GetYaxis().SetLabelSize(0.05)
+  mgd4.GetYaxis().SetTitleSize(0.06)
+  mgd4.GetYaxis().SetTitleOffset(0.87)
+  mgd4.GetYaxis().SetTitleFont(42)
+
+  pv04 = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pv04.AddText('CMS Preliminary')
+  pv04.SetFillStyle(0)
+  pv04.SetBorderSize(0)
+  pv04.SetTextSize(0.03)
+  pv04.Draw()
+  pv104 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pv104.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pv104.SetFillStyle(0)
+  pv104.SetBorderSize(0)
+  pv104.SetTextSize(0.03)
+  pv104.Draw()
+
+  legendd4 = TLegend(0.4, 0.6, .7, .8)
+  legendd4.SetNColumns(1)
+  legendd4.AddEntry(gr5E, "RE3", "p")
+  legendd4.AddEntry(gr5W, "RB3", "p")
+  legendd4.AddEntry(List[2], "MB3", "p")
+  legendd4.SetTextSize(0.05)
+  legendd4.Draw("a");
+
+  c4.SaveAs("etaDistroDetailRB3withDT.png")
+  c4.Close()
+
+  print "----- Creating Fifth TCanvas -----"
+  c5 = TCanvas("c5", "Canvas",50,50,W,H)
+  c5.SetFillColor(0)
+  c5.SetBorderMode(0)
+  c5.SetFrameFillStyle(0)
+  c5.SetFrameBorderMode(0)
+  c5.SetLeftMargin( L/W )
+  c5.SetRightMargin( R/W )
+  c5.SetTopMargin( T/H )
+  c5.SetBottomMargin( B/H )
+  c5.SetTickx(0)
+  c5.SetTicky(0)
+  gPad.SetLogy()
+
+  print " ------------ Creating TMultiGraph -----------"
+  mgd5 = TMultiGraph()
+  mgd5.Add(gr6E,"AP")
+  mgd5.Add(gr6W,"AP")
+  mgd5.Add(gr13E,"AP")
+  mgd5.Add(gr13W,"AP")
+  mgd5.Add(List[3],"AP")
+  mgd5.Draw("a")
+  mgd5.SetTitle( 'RB4')
+  mgd5.GetXaxis().SetTitle( '#eta' )
+  mgd5.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  mgd5.SetMaximum(maxY)
+  mgd5.GetXaxis().SetLabelFont(42)
+  mgd5.GetXaxis().SetLabelOffset(0.007)
+  mgd5.GetXaxis().SetLabelSize(0.043)
+  mgd5.GetXaxis().SetTitleSize(0.05)
+  mgd5.GetXaxis().SetTitleOffset(1.06)
+  mgd5.GetXaxis().SetTitleFont(42)
+  mgd5.GetYaxis().SetLabelFont(42)
+  mgd5.GetYaxis().SetLabelOffset(0.008)
+  mgd5.GetYaxis().SetLabelSize(0.05)
+  mgd5.GetYaxis().SetTitleSize(0.06)
+  mgd5.GetYaxis().SetTitleOffset(0.87)
+  mgd5.GetYaxis().SetTitleFont(42)
+
+  pv05 = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pv05.AddText('CMS Preliminary')
+  pv05.SetFillStyle(0)
+  pv05.SetBorderSize(0)
+  pv05.SetTextSize(0.03)
+  pv05.Draw()
+  pv105 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pv105.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pv105.SetFillStyle(0)
+  pv105.SetBorderSize(0)
+  pv105.SetTextSize(0.03)
+  pv105.Draw()
+
+  legendd5 = TLegend(0.4, 0.7, .7, .9)
+  legendd5.SetNColumns(1)
+  legendd5.AddEntry(gr6E, "RE3", "p")
+  legendd5.AddEntry(gr6W, "RB3", "p")
+  legendd5.AddEntry(List[3], "MB3", "p")
+  legendd5.SetTextSize(0.05)
+  legendd5.Draw("a");
+
+  c5.SaveAs("etaDistroDetailRB4withDT.png")
+  c5.Close()
+
+  print "----- Creating Sixth TCanvas -----"
+  c6 = TCanvas("c3", "Canvas",50,50,W,H)
+  c6.SetFillColor(0)
+  c6.SetBorderMode(0)
+  c6.SetFrameFillStyle(0)
+  c6.SetFrameBorderMode(0)
+  c6.SetLeftMargin( L/W )
+  c6.SetRightMargin( R/W )
+  c6.SetTopMargin( T/H )
+  c6.SetBottomMargin( B/H )
+  c6.SetTickx(0)
+  c6.SetTicky(0)
+  gPad.SetLogy()
+
+  print " ------------ Creating TMultiGraph -----------"
+
+  List[0].SetMarkerColor( kGreen+3 )
+  List[0].SetMarkerStyle( 21 )
+
+  mgd6 = TMultiGraph()
+  mgd6.Add(gr0E,"AP")
+  mgd6.Add(gr0W,"AP")
+  mgd6.Add(gr7E,"AP")
+  mgd6.Add(gr7W,"AP")
+  mgd6.Add(gr1W,"AP")
+  mgd6.Add(gr8W,"AP")
+  mgd6.Add(List[0],"AP")
+  mgd6.Draw("a")
+  mgd6.SetTitle( 'RB1in')
+  mgd6.GetXaxis().SetTitle( '#eta' )
+  mgd6.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
+  mgd6.SetMaximum(maxY)
+  mgd6.GetXaxis().SetLabelFont(42)
+  mgd6.GetXaxis().SetLabelOffset(0.007)
+  mgd6.GetXaxis().SetLabelSize(0.043)
+  mgd6.GetXaxis().SetTitleSize(0.05)
+  mgd6.GetXaxis().SetTitleOffset(1.06)
+  mgd6.GetXaxis().SetTitleFont(42)
+  mgd6.GetYaxis().SetLabelFont(42)
+  mgd6.GetYaxis().SetLabelOffset(0.008)
+  mgd6.GetYaxis().SetLabelSize(0.05)
+  mgd6.GetYaxis().SetTitleSize(0.06)
+  mgd6.GetYaxis().SetTitleOffset(0.87)
+  mgd6.GetYaxis().SetTitleFont(42)
+
+  pv06 = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
+  pv06.AddText('CMS Preliminary')
+  pv06.SetFillStyle(0)
+  pv06.SetBorderSize(0)
+  pv06.SetTextSize(0.03)
+  pv06.Draw()
+  pv106 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pv106.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pv106.SetFillStyle(0)
+  pv106.SetBorderSize(0)
+  pv106.SetTextSize(0.03)
+  pv106.Draw()
+
+  legendd6 = TLegend(0.4, 0.7, .7, .9)
+  legendd6.SetNColumns(1)
+  legendd6.AddEntry(gr0E, "RE1", "p")
+  legendd6.AddEntry(gr0W, "RB1in", "p")
+  legendd6.AddEntry(gr1W, "RB1out", "p")
+  legendd6.AddEntry(List[0], "MB1", "p")
+  legendd6.SetTextSize(0.05)
+  legendd6.Draw("a");
+
+  c6.SaveAs("etaDistroDetailRB1withDT.png")
+  c6.Close()
+
   
   print "is there an error here?"
   return
