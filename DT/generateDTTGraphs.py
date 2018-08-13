@@ -108,6 +108,7 @@ def rates_list():
 #  print section
   return rate, wheel, station, section
 
+
 ## Null -> List
 ## This function gathers the info of both eta and rates 
 ## then summs it up into a list of dictionaries
@@ -130,6 +131,7 @@ def the_list():
         theList.append(indict)
 #  print len(theList)
   return theList
+
 
 def plot_eta(x, y, name):
   print "------ Setting Up Format ----------"
@@ -232,6 +234,10 @@ def plot_eta(x, y, name):
   canv.SaveAs("etaDistro{}.png".format(name))
   canv.Close()
 
+## array, array, string -> TGraph
+## The function recieves an x and y values to create
+## a tgraph of them with the given name.
+## This function is imported for use in the etaDistro.py file
 def create_tgraphs(x, y, name):
   print "------ Creating Wheel TGraph ----------"
   n = len(x)
@@ -244,10 +250,14 @@ def create_tgraphs(x, y, name):
   gr.SetTitle( name )
   gr.GetXaxis().SetTitle( '#eta' )
   gr.GetYaxis().SetTitle( 'DT single hit rate (Hz/cm^{2})' )
-
   return gr
 
-
+## null -> List[four tgraphs]
+## The main function takes the list of dictionaries
+## that has the information about eta, rates, and the
+## geometry of the DT detector. Then it avarages over
+## the wheels and produces the TGraphs that are exported
+## for the etaDistro.py that compares them with RPC data.
 def main():
   a = the_list()
   xMB1, xMB2, xMB3, xMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' )
