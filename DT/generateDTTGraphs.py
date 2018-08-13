@@ -132,7 +132,11 @@ def the_list():
 #  print len(theList)
   return theList
 
-
+## array, array, string -> Null
+## This function was meant to test the code that came before.
+## The fiven arrays are used to create a TGraph, and the 
+## results are plotted in a canvas. The canvas is saved
+## according to the given name in the string.
 def plot_eta(x, y, name):
   print "------ Setting Up Format ----------"
   tdrstyle.setTDRStyle()
@@ -262,34 +266,18 @@ def main():
   a = the_list()
   xMB1, xMB2, xMB3, xMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' )
   yMB1, yMB2, yMB3, yMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' )
-
   wheels = [-2, -1, 0, 1, 2]
   stations = ['MB1', 'MB2', 'MB3', 'MB4']
-
-  for w in wheels:
-    avXMB1 = [i["eta"] for i in a if i["station"] == 1 and i["wheel"] == w ]
-    avYMB1 = [i["rates"] for i in a if i["station"] == 1 and i["wheel"] == w ]
-    xMB1.append( np.mean(avXMB1) )
-    yMB1.append( np.mean(avYMB1) )
-
-    avXMB2 = [i["eta"] for i in a if i["station"]   == 2 and i["wheel"] == w ]
-    avYMB2 = [i["rates"] for i in a if i["station"] == 2 and i["wheel"] == w ]
-    xMB2.append( np.mean(avXMB2) )
-    yMB2.append( np.mean(avYMB2) )
-
-    avXMB3 = [i["eta"] for i in a if i["station"]   == 3 and i["wheel"] == w ]
-    avYMB3 = [i["rates"] for i in a if i["station"] == 3 and i["wheel"] == w ]
-    xMB3.append( np.mean(avXMB3) )
-    yMB3.append( np.mean(avYMB3) )
-
-    avXMB4 = [i["eta"] for i in a if i["station"]   == 4 and i["wheel"] == w ]
-    avYMB4 = [i["rates"] for i in a if i["station"] == 4 and i["wheel"] == w ]
-    xMB4.append( np.mean(avXMB4) )
-    yMB4.append( np.mean(avYMB4) )
-
   xlist = [xMB1, xMB2, xMB3, xMB4]
   ylist = [yMB1, yMB2, yMB3, yMB4]
   grList = []
+
+  for w in wheels:
+    for n in range(len(xlist)):
+      avX = [i["eta"]   for i in a if i["station"] == n+1 and i["wheel"] == w ]
+      avY = [i["rates"] for i in a if i["station"] == n+1 and i["wheel"] == w ]
+      xlist[n].append( np.mean(avX) )
+      ylist[n].append( np.mean(avY) )
 
   for s in stations:
 #    plot_eta(xlist[stations.index(s)], ylist[stations.index(s)], s)
