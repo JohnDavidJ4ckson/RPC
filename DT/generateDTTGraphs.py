@@ -68,7 +68,7 @@ def eta_list():
 ## detector.
 def rates_list():
   lines = []
-  with open('DTrates2017.txt', 'rw') as shakes:
+  with open('DTrates2018Corrected.txt', 'rw') as shakes:
     for line in shakes:
       l = re.compile("( *)").split(line.rstrip())
       lines.append(l)
