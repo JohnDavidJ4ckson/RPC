@@ -204,13 +204,13 @@ def average_chambers(wheel, dictionary, X, Y):
           names = [k for k, v in dictionary.items()
                  for c in chambers if k == "W"+wheelSection0+w+"_"+wheelSection+s+"_S"+c+"_"+ri]
           if rates:
-            print names
-            print eta
-            print median(eta)
+            #print names
+            #print eta
+            #print median(eta)
             X.append( median(eta)   )  #sum(eta)/len(eta) )
             Y.append( median(rates) )  #sum(rates)/len(rates) ) 
-            print rates
-            print median(rates)
+            #print rates
+            #print median(rates)
       #elif wheelSection == "RB1" or wheelSection == "RB2":
       #  for ri in ring:
       #    eta = [v["eta"] for k, v in dictionary.items() for s in subrolls
