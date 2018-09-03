@@ -36,22 +36,7 @@ def create_tgraphs(x, y, name):
   gr.GetYaxis().SetTitle( 'RPC/DT single hit rate (Hz/cm^{2})' )
   return gr
 
-def main():
-  phiRPC, ratesRPC = phiDistroRPC.main()
-  phiDT,  ratesDT  = generateDTTGraphs.main(0)
-  ratioLayer1, ratioLayer2, ratioLayer3, ratioLayer4 = array('d'),array('d'),array('d'),array('d')
-  ratioList = [ ratioLayer1, ratioLayer2, ratioLayer3, ratioLayer4 ]
-  layers = [ 'Layer 1', 'Layer 2', 'Layer 3', 'Layer 4' ]
-  for i in ratioList:
-    index = ratioList.index(i)
-    for n in range(len(ratesRPC[index])):
-      i.append( ratesRPC[index][n] / ratesDT[index][n] )
-  grList = [ create_tgraphs( phiRPC[i], ratioList[i], 'Layer{}'.format(i+1) ) for i in range(len(ratioList)) ]
-  return grList
-
-if __name__ == "__main__":
-  List = main()
-  print List
+def create_plots(List):
   H = 1600
   W = 800
   #print "----- Creating Third TCanvas -----"
@@ -67,7 +52,6 @@ if __name__ == "__main__":
     if ymax < gr.GetMaximum():
       ymax = gr.GetMaximum()
     gr.SetMarkerColor(2)
-
   #print " ------------ Creating TMultiGraph -----------"
   #List[0].SetMarkerColor( kRed+2 )
   #List[0].SetMarkerStyle( 21 )
@@ -88,9 +72,8 @@ if __name__ == "__main__":
   mg.Draw("a")
   mg.SetTitle( 'All Wheels')
   mg.GetXaxis().SetTitle( '#phi' )
-  mg.GetYaxis().SetTitle( 'RPC/DT single hit rate (Hz/cm^{2})' )
+  mg.GetYaxis().SetTitle( 'RPC/DT single hit rate ratio' )
   mg.SetMaximum(50)
-
   mg.GetXaxis().SetLabelFont(42)
   mg.GetXaxis().SetLabelOffset(0.007)
   mg.GetXaxis().SetLabelSize(0.043)
@@ -121,13 +104,33 @@ if __name__ == "__main__":
   l.SetBorderSize(0)
   l.SetTextSize(0.03)
   l.SetNColumns(2)
-  l.AddEntry(List[0], "RB1 / MR1", "p")
-  l.AddEntry(List[1], "RB2 / MR2", "p")
-  l.AddEntry(List[2], "RB3 / MR3", "p")
-  l.AddEntry(List[3], "RB4 / MR4", "p")
+  l.AddEntry(List[0], "RB1 / MB1", "p")
+  l.AddEntry(List[1], "RB2 / MB2", "p")
+  l.AddEntry(List[2], "RB3 / MB3", "p")
+  l.AddEntry(List[3], "RB4 / MB4", "p")
   #l.SetTextSize(0.05)
   l.Draw("a");
   c.SaveAs("phiRatioDistro.png")
 
+def divide_rates():
+  phiRPC, ratesRPC = phiDistroRPC.main()
+  phiDT,  ratesDT  = generateDTTGraphs.main(0)
+  ratioLayer1, ratioLayer2, ratioLayer3, ratioLayer4 = array('d'),array('d'),array('d'),array('d')
+  ratioList = [ ratioLayer1, ratioLayer2, ratioLayer3, ratioLayer4 ]
+  layers = [ 'Layer 1', 'Layer 2', 'Layer 3', 'Layer 4' ]
+  for i in ratioList:
+    index = ratioList.index(i)
+    for n in range(len(ratesRPC[index])):
+      i.append( ratesRPC[index][n] / ratesDT[index][n] )
+  grList = [ create_tgraphs( phiRPC[i], ratioList[i], 'Layer{}'.format(i+1) ) for i in range(len(ratioList)) ]
+  return grList
 
+def main():
+  List = divide_rates()
+  #print List
+  create_plots(List)
+
+
+if __name__ == "__main__":
+   main()
 
