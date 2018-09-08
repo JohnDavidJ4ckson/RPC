@@ -12,4 +12,4 @@ and DT/generateDTTGraphs both of which are being revisited.
 The comparison plots that include CSC, DT and RPC hit rates vs pseudorapidity are produced by the script CSC/etaDistro.py
 The script imports CSC/generateDTTGraphs and CSC/generateCSCTGraphs in order to add the information from these detectors to
 the previous plots which only included RPC hit rates. The first 8 functions are dedicated to produce the TGraphs for the RPC
-detector. The other function (the mega redundant lines 268-1299) produces every plot.
+detector. The other function (the mega redundant lines 268-1273) produces every plot.
