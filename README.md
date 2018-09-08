@@ -13,3 +13,4 @@ The comparison plots that include CSC, DT and RPC hit rates vs pseudorapidity ar
 The script imports CSC/generateDTTGraphs and CSC/generateCSCTGraphs in order to add the information from these detectors to
 the previous plots which only included RPC hit rates. The first 8 functions are dedicated to produce the TGraphs for the RPC
 detector. The other function (the mega redundant lines 268-1273) produces every plot.
+The mapping of the arrays used by eta_plot to name TGraphs is this for RPC: 0_RB1in_RE-1, 1_RB1out_RE-1, 2-RB2_RE-2, 3_RB2in_RE-2, 4_RB2out_RE-2, 5_RB3_RE-3, 6_RB4_RE-4, 7_RB1in_RE+1, 8_RB1out_RE+1, 9_RB2_RE+2, 10_RB2in_RE+2, 11_RB2out_RE+2, 12_RB3_RE+3, 13_RB4_RE+4
