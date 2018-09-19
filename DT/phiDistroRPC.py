@@ -60,9 +60,10 @@ def phiWheel_lists_RPC():
     phi2 = v2.Phi()
     avgPhiValue = ( phi1 + phi2 ) /2
     phiDegrees = avgPhiValue * (180/3.14159265359)
-    if phiDegrees < -10.0: phiDegrees = 360+phiDegrees
-    elif phiDegrees == 4.900302002323386: phiDegrees = 180+4.900302002323386
-    phi.append(phiDegrees)
+    if phiDegrees < 0.0: phiDegrees = 360+phiDegrees
+#    elif phiDegrees == 4.900302002323386: phiDegrees = 180+4.900302002323386
+#    if is_number(avgPhiValue): phi.append(avgPhiValue)
+    if is_number(phiDegrees): phi.append(phiDegrees)
   List = [name, phi]
   return List
 
@@ -72,7 +73,8 @@ def phiWheel_lists_RPC():
 ## the second entry. The IDnames are createad as they would correspond
 ## to RPC in the Barrel section.
 def ratesWheel_lists_RPC():
-  runNumfile = "ratesAt1p5.json" #"output_rolls2018.json"
+#  runNumfile = "ratesAt1p5.json" #"output_rolls2018.json"
+  runNumfile = "dataRoll_OffSet_Lm15.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   wheels = ["0", "1", "2"]
@@ -93,13 +95,17 @@ def ratesWheel_lists_RPC():
   rates = []
   for p in parameters:
     try:
-      if float(rates1[p]) == 0 or isnan(float(rates1[p])): continue
-      rates.append(float(rates1[p]))
+      if float(rates1[p][-1]) == 1 or isnan(float(rates1[p][-1])) or float(rates1[p][-1]) < 10**(-10): 
+        continue
+      rates.append(float(rates1[p][-1]))
       names.append(p)
     except KeyError:
       continue
   List = [names, rates]
-  return List
+  #print "Problems at Layer 3 station1 (for rates)?"
+  #print rates1["W-1_RB3+_S02_Forward"][-1]
+  #print rates1["W-1_RB3-_S02_Forward"][-1]
+  return List#, parameters
 
 ## List of lists [string, double], 
 ## List of lists [string, double]  -> Dictionary
@@ -107,6 +113,7 @@ def ratesWheel_lists_RPC():
 ## names to each other and returns them in a dictionary
 def the_list(phiList, ratesList):
   intersect = set(phiList[0]).intersection(ratesList[0])
+  #print len(intersect)
   dict0 = {}
   for i in intersect:
     etaIndex = phiList[0].index(i)
@@ -121,7 +128,7 @@ def the_list(phiList, ratesList):
 ## a tgraph of them with the given name.
 ## This function is imported for use in the etaDistro.py file
 def create_tgraphs(x, y, name):
-  print "------ Creating Wheel TGraph ----------"
+  #print "------ Creating Wheel TGraph of "+name+"----------"
   n = len(x)
   gr = TGraph(n,x,y)
   gr.SetMarkerColor( kGreen+3 )
@@ -134,80 +141,106 @@ def create_tgraphs(x, y, name):
   gr.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
   return gr
 
-## null -> List[four tgraphs]
-## The main function takes the list of dictionaries
-## that has the information about eta, rates, and the
-## geometry of the DT detector. Then it avarages over
-## the wheels and produces the TGraphs that are exported
-## for the etaDistro.py that compares them with RPC data.
-def main(): # 1 for eta, 2 for phi
-  phiList = phiWheel_lists_RPC()
-  ratesList  = ratesWheel_lists_RPC()
-  dictionary = the_list(phiList,ratesList)
-  xRB1, xRB2, xRB3, xRB4 = array('d'),array('d'),array('d'),array('d')
-  yRB1, yRB2, yRB3, yRB4 = array('d'),array('d'),array('d'),array('d')
-  xlist = [xRB1, xRB2, xRB3, xRB4]
-  ylist = [yRB1, yRB2, yRB3, yRB4]
+## dictionary -> dictionary
+## The function takes a dictionary that has the information about phi, rates, and the
+## Id/key of the RPC detector e.g. W+2_RB3-_S03_Forward
+## The function avarages over subrolls and rings such that the output key has the form
+## W+2_RB3_S03 and can be used for TGraph filling
+def granularity_average(dictionary):
   stations = ["RB1","RB2","RB3", "RB4"]
-  wheels = ["0", "1", "2", "1", "2"]
+  wheels = ["-2", "-1", "+0", "+1", "+2"]
   rolls = ["1", "2", "3", "4"]
   subrolls = ["","+","-","in","out", "++", "--"]
   chambers = [
              "01","02","03","04","05","06",
-             "07","08","09","10","11","12"] # faltan 4, 9, 11
+             "07","08","09","10","11","12"] 
   ring = ["Forward", "Middle", "Backward"]
-  wheelSectionList  = ["RB1", "RB2", "RB3", "RB4"]
-  wheelSectionList0 = ["-","+"]
-  parameters = ["W"+wS0+w+"_"+wS+s+"_S"+c+"_"+ri for w in wheels
-                for s in subrolls for c in chambers for ri in ring for wS0 in wheelSectionList0
-                for wS in wheelSectionList]
+  dict0 = {}
+  for w in wheels:
+    for wS in stations:
+      for c in chambers:
+        #Create lists to extract averages here
+        names = []
+        phi = []
+        rates = []
+        for k, v in dictionary.items():
+          for ri in ring:
+            for s in subrolls:
+              if k == "W"+w+"_"+wS+s+"_S"+c+"_"+ri:
+                names.append(k)
+                cleanPhi = v["phi"]
+                rates.append( v["rates"] )
+                name = "W"+w+"_"+wS+"_S"+c
+                if (c == "01" and cleanPhi > 300): cleanPhi -= 360
+                phi.append(cleanPhi)
+        try:
+          phiAvg   = sum(phi)/len(phi)
+          ratesAvg = sum(rates)/len(rates)
+          #print name, phiAvg, ratesAvg
+          #print "The phi list is ", phi
+          indict = { "phi":phiAvg,
+               "rates":ratesAvg }
+          dict0[name] = indict
+        except ZeroDivisionError:
+          continue
+  return dict0
 
-  for wS in wheelSectionList:
-    for c in chambers:
-      phi = [float( v["phi"] ) for k, v in dictionary.items() if not isnan(v["phi"]) 
-           for w in wheels for ri in ring for wS0 in wheelSectionList0 for s in subrolls
-           if k == "W"+wS0+w+"_"+wS+s+"_S"+c+"_"+ri]
-      rates = [float( v["rates"] ) for k, v in dictionary.items() if not isnan(v["rates"]) 
-           for w in wheels for ri in ring for wS0 in wheelSectionList0 for s in subrolls
-           if k == "W"+wS0+w+"_"+wS+s+"_S"+c+"_"+ri]
-      if rates:
-        #print names
-        #print eta
-        #print median(eta)
-        xlist[wheelSectionList.index(wS)].append( median(phi)   )  #sum(eta)/len(eta) )
-        ylist[wheelSectionList.index(wS)].append( median(rates) )  #sum(rates)/len(rates) ) 
-  #xRB1 = np.multiply( xRB1, (180/3.14159265359) )
-  grList = []
-  #grList.append( create_tgraphs(xRB1, yRB1, "RB1in") )
+## dictionary -> dictionary
+## This function takes the dictionary with the correct granularity and
+## keys similar to W+2_RB3_S03. The chambers are used as the inputs of
+## TGraphs. In the end a new dictionary is returned with a TGraphs 
+## and with a key similar to W+2_RB3.
+def generate_tgraphs(dict0):
+  xRB1, xRB2, xRB3, xRB4 = array('d'),array('d'),array('d'),array('d')
+  yRB1, yRB2, yRB3, yRB4 = array('d'),array('d'),array('d'),array('d')
+  xlist = [xRB1, xRB2, xRB3, xRB4]
+  ylist = [yRB1, yRB2, yRB3, yRB4]
+  stations = ["RB1", "RB2", "RB3", "RB4"]
+  wheels = ["-2", "-1", "+0", "+1", "+2"]
+  chambers = [
+             "01","02","03","04","05","06",
+             "07","08","09","10","11","12"] 
   
-  for s in stations:
-    grList.append( create_tgraphs(xlist[stations.index(s)],ylist[stations.index(s)],s) )
+  grDict = {}
+  for w in wheels:
+    for s in stations:
+    #Create lists to average here
+      name = "W"+w+"_"+s
+      for k,v in dict0.items():
+        for c in chambers:
+          if k == "W"+w+"_"+s+"_S"+c:
+            stationIndex = stations.index(s)
+            #print stationIndex
+            xlist[stationIndex].append(v["phi"])
+            ylist[stationIndex].append(v["rates"])
+      tgr  = create_tgraphs(xlist[stationIndex],ylist[stationIndex],name)
+      #print name
+      #print tgr       
+      grDict[name] = tgr
+  return grDict
 
-  print grList
-  #return grList
-  return xlist, ylist
-if __name__ == "__main__":
-  List = main()
-
-#
+## dictionary, string --> Nul
+## The function receives a dictionary with TGraphs for each RPC Layer
+## and the name of a wheel. These are used to create a plot 
+def plot_results(list0, layer):
+  List = list0
   H = 1600
   W = 800
-
   #print "----- Creating Third TCanvas -----"
   c = TCanvas("c", "Canvas",W,H)
   ymax = 0.0
-
   c.SetLeftMargin(0.15);
   c.SetRightMargin(0.06);
   c.SetTopMargin(0.09);
   c.SetBottomMargin(0.14);
   gPad.SetGrid()
   gPad.SetLogy()
-
   for gr in List:
-    if ymax < gr.GetMaximum():
-      ymax = gr.GetMaximum()
+    if ymax < max(gr.GetY()):
+      ymax = max(gr.GetY())
     gr.SetMarkerColor(2)
+    #print "The TGraph has this number of elements"
+    #print gr.GetN()
     #gr.SetMaximum(300)
     #gr.Draw("p same hist")
     #gr.SetStats(0)
@@ -224,7 +257,6 @@ if __name__ == "__main__":
   List[2].SetMarkerStyle(25)
   List[3].SetMarkerStyle(23)
 
-
   #maxY = 12
   mg = TMultiGraph()
   mg.Add(List[0],"AP")
@@ -232,10 +264,10 @@ if __name__ == "__main__":
   mg.Add(List[2],"AP")
   mg.Add(List[3],"AP")
   mg.Draw("a")
-  mg.SetTitle( 'All Wheels')
+  mg.SetTitle( layer)
   mg.GetXaxis().SetTitle( '#phi' )
   mg.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
-  mg.SetMaximum(100)
+  mg.SetMaximum(ymax*10)
   mg.GetXaxis().SetLabelFont(42)
   mg.GetXaxis().SetLabelOffset(0.007)
   mg.GetXaxis().SetLabelSize(0.043)
@@ -266,11 +298,37 @@ if __name__ == "__main__":
   l.SetBorderSize(0)
   l.SetTextSize(0.03)
   l.SetNColumns(4)
-  l.AddEntry(List[0], "MR1", "p")
-  l.AddEntry(List[1], "MR2", "p")
-  l.AddEntry(List[2], "MR3", "p")
-  l.AddEntry(List[3], "MR4", "p")
+  l.AddEntry(List[0], "RB1", "p")
+  l.AddEntry(List[1], "RB2", "p")
+  l.AddEntry(List[2], "RB3", "p")
+  l.AddEntry(List[3], "RB4", "p")
   #l.SetTextSize(0.05)
   l.Draw("a");
 
-  c.SaveAs("phiDistroRPC.png")
+  c.SaveAs("phiDistroRPC{}.png".format(layer))
+
+## Null -> Null
+## The main function uses the rest of functions to create a TGraph dictionary
+## in the agreed granularity then distribute it to the plotting function.
+def main():
+  print "Retrieving phi Info"
+  phiList = phiWheel_lists_RPC()
+  print "Retrieving rates Info"
+  ratesList  = ratesWheel_lists_RPC()
+  print "Creating phi-rates-id dictionary"
+  dictionary0 = the_list(phiList,ratesList)
+  print "Taking the granularity average"
+  dictionary1 = granularity_average(dictionary0)
+  print "Generating TGraphs"
+  tgraphsDictionary = generate_tgraphs(dictionary1)
+  print "Creating plots"
+  plot_results() 
+  print "DONE"
+
+
+
+  return tgraphsDictionary #Use this return for the ratio plotting script
+
+if __name__ == "__main__":
+  main()
+

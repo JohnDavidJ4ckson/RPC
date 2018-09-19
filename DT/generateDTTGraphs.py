@@ -140,119 +140,13 @@ def the_list():
 #  print len(theList)
   return theList
 
-## array, array, string -> Null
-## This function was meant to test the code that came before.
-## The fiven arrays are used to create a TGraph, and the 
-## results are plotted in a canvas. The canvas is saved
-## according to the given name in the string.
-def plot_eta(x, y, name):
-  print "------ Setting Up Format ----------"
-  tdrstyle.setTDRStyle()
-  #change the CMS_lumi variables (see CMS_lumi.py)
-  CMS_lumi.writeExtraText = 1
-  CMS_lumi.extraText  = "Preliminary"
-  CMS_lumi.extraText2 = "2018 pp data"
-  CMS_lumi.lumi_sqrtS = "13 TeV" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
-  CMS_lumi.writeTitle = 1
-  CMS_lumi.textTitle = 'title'
-  iPos = 11
-  if( iPos==0 ): CMS_lumi.relPosX = 0.12
-  H_ref = 600;
-  W_ref = 800;
-  W = W_ref
-  H = H_ref
-  iPeriod = 0
-  # references for T, B, L, R  
-  T = 0.08*H_ref
-  B = 0.12*H_ref
-  L = 0.12*W_ref
-  R = 0.04*W_ref
-
-  print "----- Creating TCanvas -----"
-  H = 800
-  W = 1600
-  canv = TCanvas("c1", "Canvas",50,50,W,H)
-  canv.SetFillColor(0)
-  canv.SetBorderMode(0)
-  canv.SetFrameFillStyle(0)
-  canv.SetFrameBorderMode(0)
-  canv.SetLeftMargin( L/W )
-  canv.SetRightMargin( R/W )
-  canv.SetTopMargin( T/H )
-  canv.SetBottomMargin( B/H )
-  canv.SetTickx(0)
-  canv.SetTicky(0)
-  #canv.Divide(3,2,0.001,0.001)
-  CMS_lumi.CMS_lumi(canv, iPeriod, iPos)
-  canv.cd()
-  canv.Update()
-  maxY = max(y)*1.5
-  canv.cd(1)
-  gPad.SetLogy()
-
-  print "------ Creating Wheel TGraph ----------"
-  n = len(x)
-  print x
-  gr = TGraph(n,x,y)
-  gr.SetMarkerColor( kGreen+3 )
-  gr.SetMarkerStyle( 20 )
-  gr.SetMarkerSize( 1.5 )
-  gr.SetLineColor( 5 )
-  gr.SetLineWidth( 7 )
-  gr.SetTitle( name )
-  gr.GetXaxis().SetTitle( '#eta' )
-  gr.GetYaxis().SetTitle( 'DT single hit rate (Hz/cm^{2})' )
-
-
-  print " ------------ Creating TMultiGraph -----------"
-  mg = TMultiGraph()
-  mg.Add(gr,"AP")
-  mg.Draw("a")
-  mg.SetTitle( name )
-  mg.GetXaxis().SetTitle( '#eta' )
-  mg.GetYaxis().SetTitle( 'DT single hit rate (Hz/cm^{2})' )
-  mg.SetMaximum(maxY)
-  mg.GetXaxis().SetLabelFont(42)
-  mg.GetXaxis().SetLabelOffset(0.007)
-  mg.GetXaxis().SetLabelSize(0.043)
-  mg.GetXaxis().SetTitleSize(0.05)
-  mg.GetXaxis().SetTitleOffset(1.06)
-  mg.GetXaxis().SetTitleFont(42)
-  mg.GetYaxis().SetLabelFont(42)
-  mg.GetYaxis().SetLabelOffset(0.008)
-  mg.GetYaxis().SetLabelSize(0.05)
-  mg.GetYaxis().SetTitleSize(0.06)
-  mg.GetYaxis().SetTitleOffset(0.87)
-  mg.GetYaxis().SetTitleFont(42)
-
-  pv = TPaveText(.1,0.97,.55,0.97,"NDC") #(.06,.4,.55,.73)
-  pv.AddText('CMS Preliminary')
-  pv.SetFillStyle(0)
-  pv.SetBorderSize(0)
-  pv.SetTextSize(0.03)
-  pv.Draw()
-  pv1 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pv1.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
-  pv1.SetFillStyle(0)
-  pv1.SetBorderSize(0)
-  pv1.SetTextSize(0.03)
-  pv1.Draw()
-
-  l = TLegend(0.4, 0.6, .7, .8)
-  l.SetNColumns(1)
-  l.AddEntry(gr, name, "p")
-  l.SetTextSize(0.05)
-  l.Draw("a")
-
-  canv.SaveAs("etaDistro{}.png".format(name))
-  canv.Close()
 
 ## array, array, string -> TGraph
 ## The function recieves an x and y values to create
 ## a tgraph of them with the given name.
 ## This function is imported for use in the etaDistro.py file
 def create_tgraphs(x, y, name):
-  print "------ Creating Wheel TGraph ----------"
+  print "------ Creating Wheel TGraph for "+name+"----------"
   n = len(x)
   gr = TGraph(n,x,y)
   gr.SetMarkerColor( kGreen+3 )
@@ -273,16 +167,16 @@ def create_tgraphs(x, y, name):
 ## for the etaDistro.py that compares them with RPC data.
 def main(opt): # 1 for eta, 2 for phi
   a = the_list()
-  xMB1, xMB2, xMB3, xMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' )
-  yMB1, yMB2, yMB3, yMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' )
+  xMB1, xMB2, xMB3, xMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' ) #for eta
+  yMB1, yMB2, yMB3, yMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' ) #for eta associated rates
   zMB1, zMB2, zMB3, zMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' ) #for phi
-  wMB1, wMB2, wMB3, wMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' ) #for phi
+  wMB1, wMB2, wMB3, wMB4 = array( 'd' ), array( 'd' ), array( 'd' ), array( 'd' ) #for phi associated rates
   wheels = [-2, -1, 0, 1, 2]
   stations = ['MB1', 'MB2', 'MB3', 'MB4']
-  xlist = [xMB1, xMB2, xMB3, xMB4]
-  ylist = [yMB1, yMB2, yMB3, yMB4]
-  zlist = [zMB1, zMB2, zMB3, zMB4]
-  wlist = [wMB1, wMB2, wMB3, wMB4]
+  xlist = [xMB1, xMB2, xMB3, xMB4] #for eta
+  ylist = [yMB1, yMB2, yMB3, yMB4] #for eta associated rates
+  zlist = [zMB1, zMB2, zMB3, zMB4] #for phi
+  wlist = [wMB1, wMB2, wMB3, wMB4] #for phi associated rates
   grList = []
   grListPhi = []
 
@@ -300,20 +194,24 @@ def main(opt): # 1 for eta, 2 for phi
       wlist[n].append( np.mean(avW) )
 
   for s in stations:
-#    plot_eta(xlist[stations.index(s)], ylist[stations.index(s)], s)
-    grList.append(create_tgraphs(xlist[stations.index(s)], ylist[stations.index(s)], s))
+    #grList.append(create_tgraphs(xlist[stations.index(s)], ylist[stations.index(s)], s))
     grListPhi.append(create_tgraphs(zlist[stations.index(s)], wlist[stations.index(s)], s))
 
   if opt == 0: return zlist, wlist
   if opt == 1: return grList
   if opt == 2: return grListPhi
 
-  print grListPhi
+  #print grListPhi
   #return grList[0], grList[1], grList[2], grList[3]
 
-if __name__ == "__main__":
-  List = main(2)
-  print List
+#if __name__ == "__main__":
+#  List = main(2)
+#  #print List
+#
+## list -> Null
+## The function produces and saves the plot of the DT rates over phi distribution
+def plotDT_phi(listOf):
+  List = listOf
 
   H = 1600
   W = 800
@@ -413,3 +311,12 @@ if __name__ == "__main__":
   c.SaveAs("phiDistroDT.png")
 #  variable = RPCRates.inPhi()
 #  print variable
+
+if __name__ == "__main__":
+  List = main(2)
+  print "This is the TGraph list"
+  print List
+  plotDT_phi(List)
+  
+  #print List
+
