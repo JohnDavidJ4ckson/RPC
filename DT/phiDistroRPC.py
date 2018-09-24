@@ -320,13 +320,14 @@ def main():
   dictionary1 = granularity_average(dictionary0)
   print "Generating TGraphs"
   tgraphsDictionary = generate_tgraphs(dictionary1)
+  #print tgraphsDictionary
+  return tgraphsDictionary #Use this return for the ratio plotting script
   print "Creating plots"
   wheels = ["W-2", "W-1", "W+0", "W+1", "W+2"]
   for w in wheels:
     tgraphList = [ tgraphsDictionary[k] for k,v in tgraphsDictionary.items() if w in k] 
     plot_results(tgraphList, "Wheel"+w[-2]+w[-1]) 
   print "DONE"
-
   return tgraphsDictionary #Use this return for the ratio plotting script
 
 if __name__ == "__main__":
