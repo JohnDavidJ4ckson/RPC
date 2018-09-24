@@ -318,7 +318,7 @@ def plotDT_phi(listOf, layer):
 #  variable = RPCRates.inPhi()
 #  print variable
 
-if __name__ == "__main__":
+def main():
   print "Creating the list from geometry and rates info"
   list0 = the_list()
   print "Creating the dictionary with the standard names"
@@ -329,18 +329,13 @@ if __name__ == "__main__":
   #print dict1
   return dict1
   print "Creating plots"
- 
+
   wheels = ["W-2", "W-1", "W+0", "W+1", "W+2"]
   for w in wheels:
     tgraphList = [ dict1[k] for k,v in dict1.items() if w in k]
     plotDT_phi(tgraphList, "Wheel"+w[-2]+w[-1])
   print "DONE"
- 
 
-  #List = main(2)
-  #print "This is the TGraph list"
-  #print List
-  #plotDT_phi(List)
-  
-  #print List
 
+if __name__ == "__main__":
+  main()
