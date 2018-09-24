@@ -23,7 +23,7 @@ import generateDTTGraphs
 ## a tgraph of them with the given name.
 ## This function is imported for use in the etaDistro.py file
 def create_tgraphs(x, y, name):
-  print "------ Creating Wheel TGraph ----------"
+  #print "------ Creating Wheel TGraph ----------"
   n = len(x)
   gr = TGraph(n,x,y)
   gr.SetMarkerColor( kGreen+3 )
@@ -36,12 +36,13 @@ def create_tgraphs(x, y, name):
   gr.GetYaxis().SetTitle( 'RPC/DT single hit rate (Hz/cm^{2})' )
   return gr
 
-def create_plots(List):
+def create_plots(List, layer):
   H = 1600
   W = 800
   #print "----- Creating Third TCanvas -----"
   c = TCanvas("c", "Canvas",W,H)
   ymax = 0.0
+  ymin = 100.0
   c.SetLeftMargin(0.15);
   c.SetRightMargin(0.06);
   c.SetTopMargin(0.09);
@@ -49,16 +50,15 @@ def create_plots(List):
   gPad.SetGrid()
   gPad.SetLogy()
   for gr in List:
-    if ymax < gr.GetMaximum():
-      ymax = gr.GetMaximum()
+    #print "The GR is ",gr.GetHistogram().GetMaximum()
+    if ymax < gr.GetHistogram().GetMaximum():
+      ymax = gr.GetHistogram().GetMaximum()
+    if ymin > gr.GetHistogram().GetMinimum():
+      ymin = gr.GetHistogram().GetMinimum()
     gr.SetMarkerColor(2)
+  print "For "+layer+" the maximum is "+str(ymax)
+  print "For "+layer+" the minimum is "+str(ymin)
   #print " ------------ Creating TMultiGraph -----------"
-  #List[0].SetMarkerColor( kRed+2 )
-  #List[0].SetMarkerStyle( 21 )
-  #List[1].SetMarkerColor( kBlue+2 )
-  #List[1].SetMarkerStyle( 22 )
-  #List[2].SetMarkerColor( kMagenta+2 )
-  #List[3].SetMarkerStyle( 23 )
   List[0].SetMarkerStyle(26)
   List[1].SetMarkerStyle(20)
   List[2].SetMarkerStyle(25)
@@ -70,10 +70,12 @@ def create_plots(List):
   mg.Add(List[2],"AP")
   mg.Add(List[3],"AP")
   mg.Draw("a")
-  mg.SetTitle( 'All Wheels')
+  mg.SetTitle(layer)
   mg.GetXaxis().SetTitle( '#phi' )
   mg.GetYaxis().SetTitle( 'RPC/DT single hit rate ratio' )
-  mg.SetMaximum(50)
+  mg.SetMaximum( 50 ) #5*ymax)  # Acomodandolo a ojo 40)
+  mg.SetMinimum( 0.9 ) #ymin/2)  # Acomodandolo a ojo 0.95)
+
   mg.GetXaxis().SetLabelFont(42)
   mg.GetXaxis().SetLabelOffset(0.007)
   mg.GetXaxis().SetLabelSize(0.043)
@@ -86,7 +88,6 @@ def create_plots(List):
   mg.GetYaxis().SetTitleSize(0.06)
   mg.GetYaxis().SetTitleOffset(0.87)
   mg.GetYaxis().SetTitleFont(42)
-
   pv = TPaveText(.08,0.97,.45,0.97,"NDC")
   pv.AddText('CMS Preliminary')
   pv.SetFillStyle(0)
@@ -110,25 +111,83 @@ def create_plots(List):
   l.AddEntry(List[3], "RB4 / MB4", "p")
   #l.SetTextSize(0.05)
   l.Draw("a");
-  c.SaveAs("phiRatioDistro.png")
+  c.SaveAs("phiRatioDistro{}.png".format(layer))
 
+## null -> dictionary
+## The function uses the information about RPC and DT rates from
+## other scripts and takes it as dictionaries. Then it produces
+## a new dictionary with the ratio RPCrates/DTrates and the location
+## of the station. The keys have the form W+2_L2_S01, and describe the
+## wheel, layer, and station to which the ratio and phi location belong
 def divide_rates():
-  phiRPC, ratesRPC = phiDistroRPC.main()
-  phiDT,  ratesDT  = generateDTTGraphs.main(0)
+  print "Retrieving RPC info"
+  RPC = phiDistroRPC.main()
+  print len(RPC)
+  print "Retrieving DT info"
+  DT  = generateDTTGraphs.main()
+  print len(DT)
   ratioLayer1, ratioLayer2, ratioLayer3, ratioLayer4 = array('d'),array('d'),array('d'),array('d')
   ratioList = [ ratioLayer1, ratioLayer2, ratioLayer3, ratioLayer4 ]
-  layers = [ 'Layer 1', 'Layer 2', 'Layer 3', 'Layer 4' ]
-  for i in ratioList:
-    index = ratioList.index(i)
-    for n in range(len(ratesRPC[index])):
-      i.append( ratesRPC[index][n] / ratesDT[index][n] )
-  grList = [ create_tgraphs( phiRPC[i], ratioList[i], 'Layer{}'.format(i+1) ) for i in range(len(ratioList)) ]
-  return grList
+  layers = [ 'L1', 'L2', 'L3', 'L4' ]
+  ratioDict = {}
+  for kDT,vDT in DT.items():
+    for kRPC,vRPC in RPC.items():
+      if (kDT[1:3] == kRPC[1:3]) and (kDT[5:7] == kRPC[5:7]) and (kDT[9:11] == kRPC[9:11]):
+        name = kDT[:4]+layers[int(kDT[6]) - 1]+kDT[-4:]
+        #print name
+        ratio = vRPC["rates"]/vDT["rates"]
+        if ratio < 0.9: continue
+        if ratio > 15: continue
+        #print ratio
+        indict = { "phi":vDT["phi"],
+                   "ratio":ratio}
+        ratioDict[name] = indict
+  #print ratioDict
+  return ratioDict
+
+## dictionary -> dictionary
+## This function takes the dictionary with the ratio and keys similar to 
+## W+2_L3_S03. The chambers are used as the inputs of TGraphs. In the end 
+## a new dictionary is returned with a TGraphs and with a key similar to W+2_RB3.
+def generate_tgraphs(dict0):
+  stations = ["L1", "L2", "L3", "L4"]
+  wheels = ["-2", "-1", "+0", "+1", "+2"]
+  chambers = [
+             "01","02","03","04","05","06",
+             "07","08","09","10","11","12"]
+  grDict = {}
+  for w in wheels:
+    for s in stations:
+    #Create lists to average here
+      name = "W"+w+"_"+s
+      xL1, xL2, xL3, xL4 = array('d'),array('d'),array('d'),array('d')
+      yL1, yL2, yL3, yL4 = array('d'),array('d'),array('d'),array('d')
+      xlist = [xL1, xL2, xL3, xL4]
+      ylist = [yL1, yL2, yL3, yL4]
+      for k,v in dict0.items():
+        for c in chambers:
+          if k == "W"+w+"_"+s+"_S"+c:
+            stationIndex = stations.index(s)
+            #print stationIndex
+            xlist[stationIndex].append(v["phi"])
+            ylist[stationIndex].append(v["ratio"])
+      tgr  = create_tgraphs(xlist[stationIndex],ylist[stationIndex],name)
+      #print name
+      #print tgr       
+      grDict[name] = tgr
+  return grDict
 
 def main():
-  List = divide_rates()
-  #print List
-  create_plots(List)
+  print "Retrieving Information"
+  rDict = divide_rates()
+  print "Producing the TGraph Dictionary"
+  grDic = generate_tgraphs(rDict)
+  print "Creating plots"
+  wheels = ["W-2", "W-1", "W+0", "W+1", "W+2"]
+  for w in wheels:
+    tgraphList = [ grDic[k] for k,v in grDic.items() if w in k]
+    create_plots(tgraphList, "Wheel"+w[-2]+w[-1])
+  print "DONE"
 
 
 if __name__ == "__main__":

@@ -213,7 +213,7 @@ def generate_tgraphs(dict0):
 ## a tgraph of them with the given name.
 ## This function is imported for use in the etaDistro.py file
 def create_tgraphs(x, y, name):
-  print "------ Creating Wheel TGraph for "+name+"----------"
+  #print "------ Creating Wheel TGraph for "+name+"----------"
   n = len(x)
   gr = TGraph(n,x,y)
   gr.SetMarkerColor( kGreen+3 )
@@ -273,7 +273,7 @@ def plotDT_phi(listOf, layer):
   mg.Add(List[2],"AP")
   mg.Add(List[3],"AP")
   mg.Draw("a")
-  mg.SetTitle( 'All Wheels')
+  mg.SetTitle( layer)
   mg.GetXaxis().SetTitle( '#phi' )
   mg.GetYaxis().SetTitle( 'DT single hit rate (Hz/cm^{2})' )
   mg.SetMaximum(ymax)
@@ -319,15 +319,16 @@ def plotDT_phi(listOf, layer):
 #  print variable
 
 def main():
-  print "Creating the list from geometry and rates info"
+  #print "Creating the list from geometry and rates info"
   list0 = the_list()
-  print "Creating the dictionary with the standard names"
+  #print "Creating the dictionary with the standard names"
   dict0 = the_dictionary(list0)
-  print "Creating the dictionary with TGraph objects"
+  return dict0  ######## Quita el comentario para hacer el ratio
+  #print "Creating the dictionary with TGraph objects"
   dict1 = generate_tgraphs(dict0)
-  print "Do we really need the plots?"
+  #print "Do we really need the plots?"
   #print dict1
-  return dict1
+  #return dict1
   print "Creating plots"
 
   wheels = ["W-2", "W-1", "W+0", "W+1", "W+2"]

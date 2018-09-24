@@ -310,15 +310,16 @@ def plot_results(List, layer):
 ## The main function uses the rest of functions to create a TGraph dictionary
 ## in the agreed granularity then distribute it to the plotting function.
 def main():
-  print "Retrieving phi Info"
+  #print "Retrieving phi Info"
   phiList = phiWheel_lists_RPC()
-  print "Retrieving rates Info"
+  #print "Retrieving rates Info"
   ratesList  = ratesWheel_lists_RPC()
-  print "Creating phi-rates-id dictionary"
+  #print "Creating phi-rates-id dictionary"
   dictionary0 = the_list(phiList,ratesList)
-  print "Taking the granularity average"
+  #print "Taking the granularity average"
   dictionary1 = granularity_average(dictionary0)
-  print "Generating TGraphs"
+  return dictionary1
+  #print "Generating TGraphs"
   tgraphsDictionary = generate_tgraphs(dictionary1)
   #print tgraphsDictionary
   return tgraphsDictionary #Use this return for the ratio plotting script
