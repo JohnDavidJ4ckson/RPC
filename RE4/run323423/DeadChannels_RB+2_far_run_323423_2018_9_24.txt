@@ -1,0 +1,17 @@
+LB_Channel n. = 69 of chamber W+2_RB1out_4F (non masked) dead with max rate 0.00211896 Hz/cm2 
+LB_Channel n. = 89 of chamber W+2_RB2out_5B (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 34 of chamber W+2_RB1out_5B (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 35 of chamber W+2_RB1out_5B (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 50 of chamber W+2_RB1out_5B (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 51 of chamber W+2_RB1out_5B (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 88 of chamber W+2_RB2out_6F (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 89 of chamber W+2_RB2out_6F (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 91 of chamber W+2_RB2out_6F (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 92 of chamber W+2_RB2out_6F (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 93 of chamber W+2_RB2out_6F (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 94 of chamber W+2_RB2out_6F (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 95 of chamber W+2_RB2out_6F (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 96 of chamber W+2_RB2out_6F (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 90 of chamber W+2_RB1out_6B (non masked) dead with max rate 0.0014876 Hz/cm2 
+LB_Channel n. = 79 of chamber W+2_RB4_7+B (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 43 of chamber W+2_RB1out_9B (non masked) dead with max rate 0 Hz/cm2 

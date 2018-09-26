@@ -1,0 +1,2 @@
+LB_Channel n. = 25 of chamber RE-4_2_13 noisy for 15.5167 minutes, with max rate 323.509 Hz/cm2 
+LB_Channel n. = 12 of chamber RE-4_3_26 noisy for 34.8333 minutes, with max rate 416.071 Hz/cm2 

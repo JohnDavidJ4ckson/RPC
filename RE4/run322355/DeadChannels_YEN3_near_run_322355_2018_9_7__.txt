@@ -1,0 +1,10 @@
+LB_Channel n. = 66 of chamber RE-4_3_35 (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 34 of chamber RE-4_3_01 (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 42 of chamber RE-4_3_01 (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 65 of chamber RE-4_3_03 (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 65 of chamber RE-3_2_01 (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 20 of chamber RE-3_2_02 (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 81 of chamber RE-3_3_05 (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 17 of chamber RE-3_2_28 (non masked) dead with max rate 0 Hz/cm2 
+LB_Channel n. = 15 of chamber RE-3_2_30 (non masked) dead with max rate 0.0063532 Hz/cm2 
+LB_Channel n. = 65 of chamber RE-3_2_32 (non masked) dead with max rate 0 Hz/cm2 

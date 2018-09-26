@@ -1,0 +1,1 @@
+LB_Channel n. = 2 of chamber W0_RB3_8B noisy for 32.2833 minutes, with max rate 182.059 Hz/cm2 

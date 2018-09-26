@@ -1,0 +1,5 @@
+LB_Channel n. = 2 of chamber W+2_RB2in_5B noisy for 40.8 minutes, with max rate 176.315 Hz/cm2 
+LB_Channel n. = 5 of chamber W+2_RB3_6F noisy for 18.8167 minutes, with max rate 438.024 Hz/cm2 
+LB_Channel n. = 51 of chamber W+2_RB1out_8B noisy for 44.8 minutes, with max rate 249.379 Hz/cm2 
+LB_Channel n. = 52 of chamber W+2_RB1out_8B noisy for 44.8 minutes, with max rate 214.935 Hz/cm2 
+LB_Channel n. = 54 of chamber W+2_RB1out_8B noisy for 36.1167 minutes, with max rate 172.042 Hz/cm2 

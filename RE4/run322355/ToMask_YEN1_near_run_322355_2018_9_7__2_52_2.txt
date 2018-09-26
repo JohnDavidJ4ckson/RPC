@@ -1,0 +1,1 @@
+LB_Channel n. = 17 of chamber RE-1_2_29 noisy for 41 minutes, with max rate 534.676 Hz/cm2 

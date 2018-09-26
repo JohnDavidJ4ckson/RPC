@@ -1,0 +1,2 @@
+Chamber W0_RB4_1+F rate unmasked 0 Hz      rate masked 0 Hz 
+Chamber W0_RB4_1+B rate unmasked 0 Hz      rate masked 0 Hz 

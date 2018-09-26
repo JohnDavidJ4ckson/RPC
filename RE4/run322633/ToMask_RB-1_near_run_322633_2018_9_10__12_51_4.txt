@@ -1,0 +1,3 @@
+LB_Channel n. = 35 of chamber W-1_RB3_11F noisy for 39.0667 minutes, with max rate 1343.25 Hz/cm2 
+LB_Channel n. = 35 of chamber W-1_RB3_11B noisy for 17.6 minutes, with max rate 1342.46 Hz/cm2 
+LB_Channel n. = 36 of chamber W-1_RB3_11B noisy for 18.9 minutes, with max rate 889.357 Hz/cm2 

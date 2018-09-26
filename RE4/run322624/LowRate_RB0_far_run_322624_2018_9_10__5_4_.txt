@@ -1,0 +1,3 @@
+Chamber W0_RB4_7+F rate unmasked 3.99537 Hz      rate masked 0 Hz 
+Chamber W0_RB4_7+B rate unmasked 0 Hz      rate masked 0 Hz 
+Chamber W0_RB1in_8B rate unmasked 4.08166 Hz      rate masked 4.03053 Hz 

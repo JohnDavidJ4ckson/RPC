@@ -1,0 +1,11 @@
+LB_Channel n. = 16 of chamber RE+1_3_02 noisy for 29.8833 minutes, with max rate 663.376 Hz/cm2 
+LB_Channel n. = 33 of chamber RE+1_2_29 noisy for 134.417 minutes, with max rate 3464.58 Hz/cm2 
+LB_Channel n. = 34 of chamber RE+1_2_29 noisy for 130.733 minutes, with max rate 3402.1 Hz/cm2 
+LB_Channel n. = 35 of chamber RE+1_2_29 noisy for 129.133 minutes, with max rate 2971.14 Hz/cm2 
+LB_Channel n. = 36 of chamber RE+1_2_29 noisy for 119.883 minutes, with max rate 2585.77 Hz/cm2 
+LB_Channel n. = 22 of chamber RE+1_3_29 noisy for 19.5167 minutes, with max rate 2231.64 Hz/cm2 
+LB_Channel n. = 24 of chamber RE+1_3_29 noisy for 23.2667 minutes, with max rate 1907.14 Hz/cm2 
+LB_Channel n. = 18 of chamber RE+1_3_33 noisy for 72.3833 minutes, with max rate 1350.27 Hz/cm2 
+LB_Channel n. = 19 of chamber RE+1_3_33 noisy for 59.0333 minutes, with max rate 1449.97 Hz/cm2 
+LB_Channel n. = 23 of chamber RE+1_3_33 noisy for 54.3333 minutes, with max rate 1293.73 Hz/cm2 
+LB_Channel n. = 24 of chamber RE+1_3_33 noisy for 17.7 minutes, with max rate 813.016 Hz/cm2 

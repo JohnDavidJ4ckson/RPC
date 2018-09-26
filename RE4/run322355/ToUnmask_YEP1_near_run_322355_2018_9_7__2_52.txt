@@ -1,0 +1,1 @@
+LB_Channel n. = 45 of chamber RE+1_2_35 is masked but not noisy with max rate 0.000348218 Hz/cm2 

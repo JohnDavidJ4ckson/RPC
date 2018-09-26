@@ -1,0 +1,9 @@
+Summary per tower - Input file /rpctdata/LBMonitorHistos/Histos_RB+2_near_run_323471_2018_9_24__17_18_30.root
+Total number of masked strips:             94
+Total number of masked strips to unmask:   112
+Total number of strips to mask:            94
+Average rate per roll in WIN data:         308138 Hz 
+Total number of noisy strips in FULL data: 157
+Total number of noisy strips in WIN  data: 108
+Noisy for more than 15' min in WIN data:   94
+ 

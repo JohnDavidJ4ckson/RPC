@@ -1,0 +1,3 @@
+Chamber RE+4_2_22 rate unmasked 0 Hz      rate masked 0 Hz 
+Chamber RE+4_2_24 rate unmasked 0 Hz      rate masked 0 Hz 
+Chamber RE+4_3_26 rate unmasked 1.14259 Hz      rate masked 1.11633 Hz 

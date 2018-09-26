@@ -1,0 +1,16 @@
+LB_Channel n. = 50 of chamber W+2_RB4_5+B masked 
+LB_Channel n. = 96 of chamber W+2_RB2out_5F masked 
+LB_Channel n. = 96 of chamber W+2_RB2out_7B masked 
+LB_Channel n. = 51 of chamber W+2_RB4_8+F masked 
+LB_Channel n. = 71 of chamber W+2_RB4_8+F masked 
+LB_Channel n. = 34 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 35 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 36 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 37 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 38 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 39 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 40 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 68 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 85 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 87 of chamber W+2_RB1out_8B masked 
+LB_Channel n. = 1 of chamber W+2_RB4_9F masked 

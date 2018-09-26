@@ -1,0 +1,11 @@
+LB_Channel n. = 48 of chamber RE+4_3_02 is masked but not noisy with max rate 0.440809 Hz/cm2 
+LB_Channel n. = 65 of chamber RE+3_3_05 is masked but not noisy with max rate 0.534118 Hz/cm2 
+LB_Channel n. = 66 of chamber RE+3_3_05 is masked but not noisy with max rate 0.575276 Hz/cm2 
+LB_Channel n. = 67 of chamber RE+3_3_05 is masked but not noisy with max rate 0.472436 Hz/cm2 
+LB_Channel n. = 68 of chamber RE+3_3_05 is masked but not noisy with max rate 0.38841 Hz/cm2 
+LB_Channel n. = 69 of chamber RE+3_3_05 is masked but not noisy with max rate 0.390229 Hz/cm2 
+LB_Channel n. = 70 of chamber RE+3_3_05 is masked but not noisy with max rate 0.48764 Hz/cm2 
+LB_Channel n. = 71 of chamber RE+3_3_05 is masked but not noisy with max rate 0.432891 Hz/cm2 
+LB_Channel n. = 72 of chamber RE+3_3_05 is masked but not noisy with max rate 0.433989 Hz/cm2 
+LB_Channel n. = 19 of chamber RE+3_2_08 is masked but not noisy with max rate 0.590179 Hz/cm2 
+LB_Channel n. = 70 of chamber RE+3_3_06 is masked but not noisy with max rate 0.291217 Hz/cm2 

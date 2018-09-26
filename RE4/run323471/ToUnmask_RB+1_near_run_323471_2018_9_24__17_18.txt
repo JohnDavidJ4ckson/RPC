@@ -1,0 +1,11 @@
+LB_Channel n. = 82 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.37027 Hz/cm2 
+LB_Channel n. = 83 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.368526 Hz/cm2 
+LB_Channel n. = 84 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.312294 Hz/cm2 
+LB_Channel n. = 85 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.317013 Hz/cm2 
+LB_Channel n. = 88 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.205628 Hz/cm2 
+LB_Channel n. = 90 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.111416 Hz/cm2 
+LB_Channel n. = 91 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.0825787 Hz/cm2 
+LB_Channel n. = 92 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.0912991 Hz/cm2 
+LB_Channel n. = 93 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.156503 Hz/cm2 
+LB_Channel n. = 94 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.545376 Hz/cm2 
+LB_Channel n. = 96 of chamber W+1_RB1out_1B is masked but not noisy with max rate 0.792226 Hz/cm2 

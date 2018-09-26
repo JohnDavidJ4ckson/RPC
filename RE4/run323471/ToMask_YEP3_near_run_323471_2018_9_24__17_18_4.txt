@@ -1,0 +1,1 @@
+LB_Channel n. = 10 of chamber RE+4_2_08 noisy for 36.35 minutes, with max rate 629.84 Hz/cm2 
