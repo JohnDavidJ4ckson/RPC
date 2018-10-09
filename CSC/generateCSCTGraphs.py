@@ -16,6 +16,15 @@ def the_list(etaInfo):
   ratesNeg, keysNeg = read2018Neg.main()
   ratesPos, keysPos = read2018Pos.main()
   rates = ratesNeg + ratesPos
+  print type(rates)
+  print rates
+  for r in rates:
+    index = rates.index(r)    
+    newR = r * ( (1.5*(10**34)) / (4.8*(10**33)) )
+    rates[index] = newR
+  print rates
+  print type(r)
+  print r
   keys = keysNeg + keysPos
   theList = [ keys, eta, rates]
   #print theList
