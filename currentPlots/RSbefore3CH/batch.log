@@ -1,0 +1,10 @@
+[2018-10-17 01:23:15] Running QUEUE: testBeforeTS2Endcap.csv
+[2018-10-17 01:23:20.693748] [Execution Manager] LHFill Selected: 1
+[2018-10-17 01:23:20.693799] [Execution Manager] Runnumber Selected: 4
+[2018-10-17 01:23:20.693811] [Execution Manager] Lumisection Selected: 1904
+[2018-10-17 01:23:20.693834] [Execution Manager] DPID Selected: 3
+[2018-10-17 01:23:20.693844] [Execution Manager] DPID NOT ON for the entire selected period: 3
+[2018-10-17 01:23:20.693851] [Execution Manager] Finalizing LHFill GroupBy
+[2018-10-17 01:23:20.697854] [Execution Manager] Finalizing Runnumber GroupBy
+[2018-10-17 01:23:20.702107] [Execution Manager] Finalizing Lumisection GroupBy
+[2018-10-17 01:23:20] Done!

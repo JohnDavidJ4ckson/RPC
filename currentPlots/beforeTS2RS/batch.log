@@ -1,0 +1,37 @@
+[2018-10-15 22:14:13] Running QUEUE: testBeforeTS2Barrel09.csv
+[2018-10-15 22:14:19.449625] [Execution Manager] LHFill Selected: 1
+[2018-10-15 22:14:19.449688] [Execution Manager] Runnumber Selected: 4
+[2018-10-15 22:14:19.449703] [Execution Manager] Lumisection Selected: 1904
+[2018-10-15 22:14:19.449711] [Execution Manager] DPID Selected: 1
+[2018-10-15 22:14:19.449720] [Execution Manager] DPID NOT ON for the entire selected period: 1
+[2018-10-15 22:14:19.449727] [Execution Manager] Finalizing LHFill GroupBy
+[2018-10-15 22:14:19.452374] [Execution Manager] Finalizing Runnumber GroupBy
+[2018-10-15 22:14:19.454107] [Execution Manager] Finalizing Lumisection GroupBy
+[2018-10-15 22:14:19] Running QUEUE: testBeforeTS2Barrel10.csv
+[2018-10-15 22:14:24.940854] [Execution Manager] LHFill Selected: 1
+[2018-10-15 22:14:24.940925] [Execution Manager] Runnumber Selected: 4
+[2018-10-15 22:14:24.940940] [Execution Manager] Lumisection Selected: 1904
+[2018-10-15 22:14:24.940948] [Execution Manager] DPID Selected: 1
+[2018-10-15 22:14:24.940958] [Execution Manager] DPID NOT ON for the entire selected period: 1
+[2018-10-15 22:14:24.940965] [Execution Manager] Finalizing LHFill GroupBy
+[2018-10-15 22:14:24.944901] [Execution Manager] Finalizing Runnumber GroupBy
+[2018-10-15 22:14:24.949394] [Execution Manager] Finalizing Lumisection GroupBy
+[2018-10-15 22:14:26] Running QUEUE: testBeforeTS2Barrel11.csv
+[2018-10-15 22:14:31.556294] [Execution Manager] LHFill Selected: 1
+[2018-10-15 22:14:31.556370] [Execution Manager] Runnumber Selected: 4
+[2018-10-15 22:14:31.556386] [Execution Manager] Lumisection Selected: 1904
+[2018-10-15 22:14:31.556394] [Execution Manager] DPID Selected: 1
+[2018-10-15 22:14:31.556403] [Execution Manager] DPID NOT ON for the entire selected period: 1
+[2018-10-15 22:14:31.556410] [Execution Manager] Finalizing LHFill GroupBy
+[2018-10-15 22:14:31.562023] [Execution Manager] Finalizing Runnumber GroupBy
+[2018-10-15 22:14:31.567255] [Execution Manager] Finalizing Lumisection GroupBy
+[2018-10-15 22:14:31] Running QUEUE: testBeforeTS2.csv
+[2018-10-15 22:14:37.073631] [Execution Manager] LHFill Selected: 1
+[2018-10-15 22:14:37.073695] [Execution Manager] Runnumber Selected: 4
+[2018-10-15 22:14:37.073713] [Execution Manager] Lumisection Selected: 1904
+[2018-10-15 22:14:37.073758] [Execution Manager] DPID Selected: 4
+[2018-10-15 22:14:37.073781] [Execution Manager] DPID NOT ON for the entire selected period: 4
+[2018-10-15 22:14:37.073794] [Execution Manager] Finalizing LHFill GroupBy
+[2018-10-15 22:14:37.076646] [Execution Manager] Finalizing Runnumber GroupBy
+[2018-10-15 22:14:37.081407] [Execution Manager] Finalizing Lumisection GroupBy
+[2018-10-15 22:14:37] Done!
