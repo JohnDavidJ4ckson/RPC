@@ -164,8 +164,8 @@ def plot_results(List, layer):
   l.SetBorderSize(0)
   l.SetTextSize(0.03)
   l.SetNColumns(1)
-  l.AddEntry(List[0], "RE-4 CH09, CH10, CH11 (before TS2)", "p")
-  l.AddEntry(List[1], "RE-4 CH09, CH10, CH11 (after TS2)", "p")
+  l.AddEntry(List[0], "RE-4 CH18, CH19, CH20 (before TS2)", "p")
+  l.AddEntry(List[1], "RE-4 CH18, CH19, CH20 (after TS2)", "p")
   #l.AddEntry(List[2], "RE-4 run 322355 (before TS2)", "p")
   #l.AddEntry(List[3], "RE+4 run 322355 (before TS2)", "p")
   #l.SetTextSize(0.05)
@@ -178,6 +178,7 @@ def plot_results(List, layer):
 ## in the agreed granularity then distribute it to the plotting function.
 def main():
   print "Retrieving rates Info"
+
   print "Loading Files' Data"
   listaRatesAfterTS2CH =  rates_endcap_list("CH181920/outputs/lumisection_testAfterTS2Endcap.csv")
   listaRatesBeforeTS2CH = rates_endcap_list("CH181920/outputs/lumisection_testBeforeTS2Endcap.csv")
@@ -188,7 +189,7 @@ def main():
   tgraphsDictionaryBeforeTS2 = generate_tgraphs(listaRatesBeforeTS2CH,'RE-4 before TS2')
   print "Creating plots"
   tgraphList = [ tgraphsDictionaryBeforeTS2, tgraphsDictionaryAfterTS2 ]
-  plot_results(tgraphList, "RE+4_3pleCH_Comparison")
+  plot_results(tgraphList, "RE+4_CH181920_Comparison")
   print "DONE"
   return
 

@@ -178,9 +178,25 @@ def plot_results(List, layer):
 ## in the agreed granularity then distribute it to the plotting function.
 def main():
   print "Retrieving rates Info"
+
   print "Loading Files' Data"
-  listaRatesAfterTS2CH =  rates_endcap_list("CH181920/outputs/lumisection_testAfterTS2Endcap.csv")
-  listaRatesBeforeTS2CH = rates_endcap_list("CH181920/outputs/lumisection_testBeforeTS2Endcap.csv")
+  listaRatesAfterTS2CH =  rates_endcap_list("RSafter3CHRE-4/outputs/lumisection_testAfterTS2Endcap.csv")
+  listaRatesBeforeTS2CH = rates_endcap_list("RSbefore3CHRE-4/outputs/lumisection_testBeforeTS2Endcap.csv")
+  #listaRatesAfterTS2CH10 =  rates_endcap_list("RSafterTS2/outputs/lumisection_testAfterTS2Endcap10.csv")
+  #listaRatesBeforeTS2CH10 = rates_endcap_list("beforeTS2RS/outputs/lumisection_testBeforeTS2Barrel10.csv")
+  #listaRatesAfterTS2CH11 =  rates_endcap_list("RSafterTS2/outputs/lumisection_testAfterTS2Endcap11.csv")
+  #listaRatesBeforeTS2CH11 = rates_endcap_list("beforeTS2RS/outputs/lumisection_testBeforeTS2Barrel11.csv")
+
+
+
+  #print "Creating collection of Data"
+  #afterCurry  = listaRatesAfterTS2CH09[0]  + listaRatesAfterTS2CH10[0]  + listaRatesAfterTS2CH11[0]
+  #beforeCurry = listaRatesBeforeTS2CH09[0] + listaRatesBeforeTS2CH10[0] + listaRatesBeforeTS2CH11[0]
+  #afterLumi   = listaRatesAfterTS2CH09[1]  + listaRatesAfterTS2CH10[1]  + listaRatesAfterTS2CH11[1]
+  #beforeLumi  = listaRatesBeforeTS2CH09[1] + listaRatesBeforeTS2CH10[1] + listaRatesBeforeTS2CH11[1]
+  #listAfter  = [afterCurry,afterLumi]
+  #listBefore = [beforeCurry,beforeLumi]
+
   print "Generating TGraphs"
   print "THIS is AFTER"
   tgraphsDictionaryAfterTS2  = generate_tgraphs(listaRatesAfterTS2CH,'RE-4 after TS2')

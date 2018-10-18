@@ -1,0 +1,19 @@
+[2018-10-18 00:34:11] Running QUEUE: testAfterTS2Endcap.csv
+[2018-10-18 00:34:17.159058] [Execution Manager] LHFill Selected: 1
+[2018-10-18 00:34:17.159127] [Execution Manager] Runnumber Selected: 2
+[2018-10-18 00:34:17.159141] [Execution Manager] Lumisection Selected: 1607
+[2018-10-18 00:34:17.159150] [Execution Manager] DPID Selected: 3
+[2018-10-18 00:34:17.159159] [Execution Manager] DPID NOT ON for the entire selected period: 0
+[2018-10-18 00:34:17.159165] [Execution Manager] Finalizing LHFill GroupBy
+[2018-10-18 00:34:17.163078] [Execution Manager] Finalizing Runnumber GroupBy
+[2018-10-18 00:34:17.166066] [Execution Manager] Finalizing Lumisection GroupBy
+[2018-10-18 00:34:17] Running QUEUE: testBeforeTS2Endcap.csv
+[2018-10-18 00:34:22.626929] [Execution Manager] LHFill Selected: 1
+[2018-10-18 00:34:22.627067] [Execution Manager] Runnumber Selected: 4
+[2018-10-18 00:34:22.627079] [Execution Manager] Lumisection Selected: 1904
+[2018-10-18 00:34:22.627092] [Execution Manager] DPID Selected: 3
+[2018-10-18 00:34:22.627101] [Execution Manager] DPID NOT ON for the entire selected period: 3
+[2018-10-18 00:34:22.627108] [Execution Manager] Finalizing LHFill GroupBy
+[2018-10-18 00:34:22.631076] [Execution Manager] Finalizing Runnumber GroupBy
+[2018-10-18 00:34:22.632506] [Execution Manager] Finalizing Lumisection GroupBy
+[2018-10-18 00:34:22] Done!
