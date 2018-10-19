@@ -92,10 +92,10 @@ def plot_results(List, layer):
   #print "----- Creating Third TCanvas -----"
   c = TCanvas("c", "Canvas",W,H)
   ymax = 0.0
-  c.SetLeftMargin(0.15);
-  c.SetRightMargin(0.06);
-  c.SetTopMargin(0.09);
-  c.SetBottomMargin(0.14);
+  c.SetLeftMargin(0.15)
+  c.SetRightMargin(0.06)
+  c.SetTopMargin(0.09)
+  c.SetBottomMargin(0.14)
   gPad.SetGrid()
   #gPad.SetLogy()
   for gr in List:
@@ -111,7 +111,7 @@ def plot_results(List, layer):
   #print " ------------ Creating TMultiGraph -----------"
   List[0].SetMarkerColor( kBlue+2 )
   #List[0].SetMarkerStyle( 21 )
-  List[1].SetMarkerColor( kRed+2 )
+  List[1].SetMarkerColor( kGreen+3 )
   #List[1].SetMarkerStyle( 22 )
   #List[2].SetMarkerColor( kBlue )
   #List[3].SetMarkerStyle( 23 )
@@ -131,7 +131,9 @@ def plot_results(List, layer):
   mg.SetTitle( "")
   mg.GetXaxis().SetTitle( 'Instantaneous Luminosity (10^{30} cm^{-2} s^{-1})' )
   mg.GetYaxis().SetTitle( 'Current (#mu A)' )
-  mg.SetMaximum(ymax+10)
+  mg.SetMaximum(ymax+12)
+  #mg.SetMinimum(-10.0)
+  #mg.GetXaxis().SetLimits(0.,20000); 
   mg.GetXaxis().SetLabelFont(42)
   mg.GetXaxis().SetLabelOffset(0.007)
   mg.GetYaxis().CenterTitle(kTRUE)
@@ -153,23 +155,33 @@ def plot_results(List, layer):
   pv.SetBorderSize(0)
   pv.SetTextSize(0.03)
   pv.Draw()
-  pv1 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  #pv1.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pv1 = TPaveText(.55,0.93,.9,0.93,"NDC")
+  pv1.AddText('RE+4, CH01, CH02, CH36 (13 TeV)')
   pv1.SetFillStyle(0)
   pv1.SetBorderSize(0)
   pv1.SetTextSize(0.03)
   pv1.Draw()
-  l = TLegend(0.15,0.78,0.75,0.88)
+
+  fun1 = TF1("fun1","pol1",7000,19000)
+  fun2 = TF1("fun2","pol1",9000,19000)
+
+  fit1 = List[0].Fit("fun1","FQR") # "FQ")
+  fit2 = List[1].Fit("fun2","FQR") # "FQ")
+
+  offset1 = fun1.GetParameter(0)
+  offset2 = fun2.GetParameter(0)
+  slope1 = fun1.GetParameter(1)
+  slope2 = fun2.GetParameter(1)
+
+  l = TLegend(0.17,0.75,0.78,0.88)
   l.SetFillColor(0)
   l.SetBorderSize(0)
-  l.SetTextSize(0.03)
+  l.SetTextSize(0.025)
   l.SetNColumns(1)
-  l.AddEntry(List[0], "RE-4 CH18, CH19, CH20 (before TS2)", "p")
-  l.AddEntry(List[1], "RE-4 CH18, CH19, CH20 (after TS2)", "p")
-  #l.AddEntry(List[2], "RE-4 run 322355 (before TS2)", "p")
-  #l.AddEntry(List[3], "RE+4 run 322355 (before TS2)", "p")
-  #l.SetTextSize(0.05)
-  l.Draw("a");
+  l.AddEntry(List[0], "fill 7080 (before TS2) The offset is {0:.{1}f}".format(offset1,2) + " and the slope is {0:.{1}f}".format(slope1,4), "p")
+  l.AddEntry(List[1], "fill 7252 (after TS2) The offset is {0:.{1}f}".format(offset2,2)  + " and the slope is {0:.{1}f}".format(slope2,4), "p")
+  l.Draw("ap")
+
 
   c.SaveAs("currentDistroRPC{}.png".format(layer))
 
@@ -178,10 +190,9 @@ def plot_results(List, layer):
 ## in the agreed granularity then distribute it to the plotting function.
 def main():
   print "Retrieving rates Info"
-
   print "Loading Files' Data"
-  listaRatesAfterTS2CH =  rates_endcap_list("CH181920/outputs/lumisection_testAfterTS2Endcap.csv")
-  listaRatesBeforeTS2CH = rates_endcap_list("CH181920/outputs/lumisection_testBeforeTS2Endcap.csv")
+  listaRatesAfterTS2CH =  rates_endcap_list("CH360102/outputs/lumisection_testAfterTS2Endcap.csv")
+  listaRatesBeforeTS2CH = rates_endcap_list("CH360102/outputs/lumisection_testBeforeTS2Endcap.csv")
   print "Generating TGraphs"
   print "THIS is AFTER"
   tgraphsDictionaryAfterTS2  = generate_tgraphs(listaRatesAfterTS2CH,'RE-4 after TS2')
@@ -189,7 +200,7 @@ def main():
   tgraphsDictionaryBeforeTS2 = generate_tgraphs(listaRatesBeforeTS2CH,'RE-4 before TS2')
   print "Creating plots"
   tgraphList = [ tgraphsDictionaryBeforeTS2, tgraphsDictionaryAfterTS2 ]
-  plot_results(tgraphList, "RE+4_CH181920_Comparison")
+  plot_results(tgraphList, "RE+4_CH360102_TS2")
   print "DONE"
   return
 
