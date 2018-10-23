@@ -156,7 +156,12 @@ def plot_results(List, layer):
   pv.SetTextSize(0.03)
   pv.Draw()
   pv1 = TPaveText(.55,0.93,.9,0.93,"NDC")
-  pv1.AddText('RE+4, CH01, CH02, CH36 (13 TeV)')
+
+  chamber1 = 'CH'+layer[7:9]
+  chamber2 = 'CH'+layer[9:11]
+  chamber3 = 'CH'+layer[11:13]
+
+  pv1.AddText('RE+4, '+chamber1+', '+chamber2+', '+chamber3+' (13 TeV)')
   pv1.SetFillStyle(0)
   pv1.SetBorderSize(0)
   pv1.SetTextSize(0.03)
@@ -172,27 +177,34 @@ def plot_results(List, layer):
   offset2 = fun2.GetParameter(0)
   slope1 = fun1.GetParameter(1)
   slope2 = fun2.GetParameter(1)
+  slopeRatio = slope2/slope1
 
-  l = TLegend(0.17,0.75,0.78,0.88)
+  l = TLegend(0.18,0.75,0.75,0.88)
   l.SetFillColor(0)
-  l.SetBorderSize(0)
-  l.SetTextSize(0.025)
+  l.SetBorderSize(1)
+  l.SetTextSize(0.022)
   l.SetNColumns(1)
+  l.SetMargin(.05)
+  #l.SetTextAlign(13)
+  l.SetHeader("The data is fit to a line: Current = m #times Ins. Luminosity + b","C")
   l.AddEntry(List[0], "fill 7080 (before TS2) The offset is {0:.{1}f}".format(offset1,2) + " and the slope is {0:.{1}f}".format(slope1,4), "p")
   l.AddEntry(List[1], "fill 7252 (after TS2) The offset is {0:.{1}f}".format(offset2,2)  + " and the slope is {0:.{1}f}".format(slope2,4), "p")
-  l.Draw("ap")
+  l.AddEntry( None, "The ratio of slopes  m(7252)/m(7080) is {0:.{1}f}".format(slopeRatio,6) , "")
+  l.Draw("")
 
-
-  c.SaveAs("currentDistroRPC{}.png".format(layer))
+  c.SaveAs("currentDistroRPC_{}.png".format(layer))
+  return slopeRatio
 
 ## Null -> Null
 ## The main function uses the rest of functions to create a TGraph dictionary
 ## in the agreed granularity then distribute it to the plotting function.
-def main():
+def plot_ts2_comparison(sector):
+  print "outputs/lumisection_afterTS2{}.csv".format(sector) 
+  return
   print "Retrieving rates Info"
   print "Loading Files' Data"
-  listaRatesAfterTS2CH =  rates_endcap_list("CH360102/outputs/lumisection_testAfterTS2Endcap.csv")
-  listaRatesBeforeTS2CH = rates_endcap_list("CH360102/outputs/lumisection_testBeforeTS2Endcap.csv")
+  listaRatesAfterTS2CH =  rates_endcap_list("outputs/lumisection_afterTS2{}.csv".format(sector))
+  listaRatesBeforeTS2CH = rates_endcap_list("outputs/lumisection_beforeTS2{}.csv".format(sector))
   print "Generating TGraphs"
   print "THIS is AFTER"
   tgraphsDictionaryAfterTS2  = generate_tgraphs(listaRatesAfterTS2CH,'RE-4 after TS2')
@@ -200,9 +212,28 @@ def main():
   tgraphsDictionaryBeforeTS2 = generate_tgraphs(listaRatesBeforeTS2CH,'RE-4 before TS2')
   print "Creating plots"
   tgraphList = [ tgraphsDictionaryBeforeTS2, tgraphsDictionaryAfterTS2 ]
-  plot_results(tgraphList, "RE+4_CH360102_TS2")
+  slopeRatio = plot_results(tgraphList, "RE+4_CH{}_TS2".format(sector[2:]))
   print "DONE"
-  return
+  return slopeRatio
+
+def main():
+  chamberNumbers = ["{0:02d}".format(i+1)  for i in range(36)]
+  #print chamberNumbers
+
+  fileNames = []
+  for i in range(36):
+    n0 = (i-1) % 36
+    n1 = (i) % 36
+    n2 = (i+1) % 36
+    string = 'ch'+chamberNumbers[n0]+chamberNumbers[n1]+chamberNumbers[n2]
+    if i%3 == 0: fileNames.append(string)
+  #print fileNames
+  slopeRatio = []
+  for f in fileNames:
+    ratio = plot_ts2_comparison(f)
+    slopeRatio.append(ratio)
+  print fileNames
+  print slopeRatio
 
 if __name__ == "__main__":
   main()
