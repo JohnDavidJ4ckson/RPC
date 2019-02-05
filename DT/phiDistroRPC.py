@@ -74,7 +74,7 @@ def phiWheel_lists_RPC():
 ## to RPC in the Barrel section.
 def ratesWheel_lists_RPC():
 #  runNumfile = "ratesAt1p5.json" #"output_rolls2018.json"
-  runNumfile = "dataRoll_OffSet_Lm15.json" #"output_rolls2018.json"
+  runNumfile =   "ratesAt1p5_end18.json"  #"dataRoll_OffSet_Lm15.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   wheels = ["0", "1", "2"]
@@ -263,10 +263,10 @@ def plot_results(List, layer):
   mg.Add(List[2],"AP")
   mg.Add(List[3],"AP")
   mg.Draw("a")
-  mg.SetTitle( layer)
+  mg.SetTitle( 'W'+layer[-2:])
   mg.GetXaxis().SetTitle( '#phi' )
   mg.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
-  mg.SetMaximum(ymax*10)
+  mg.SetMaximum(ymax*3)
   mg.GetXaxis().SetLabelFont(42)
   mg.GetXaxis().SetLabelOffset(0.007)
   mg.GetXaxis().SetLabelSize(0.043)
@@ -280,13 +280,13 @@ def plot_results(List, layer):
   mg.GetYaxis().SetTitleOffset(0.87)
   mg.GetYaxis().SetTitleFont(42)
 
-  pv = TPaveText(.08,0.97,.45,0.97,"NDC") 
+  pv = TPaveText(.08,0.94,.45,0.94,"NDC") 
   pv.AddText('CMS Preliminary')
   pv.SetFillStyle(0)
   pv.SetBorderSize(0)
-  pv.SetTextSize(0.03)
+  pv.SetTextSize(0.04)
   pv.Draw()
-  pv1 = TPaveText(.7,0.97,.9,0.97,"NDC")
+  pv1 = TPaveText(.7,0.94,.9,0.94,"NDC")
   pv1.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pv1.SetFillStyle(0)
   pv1.SetBorderSize(0)
@@ -304,25 +304,27 @@ def plot_results(List, layer):
   #l.SetTextSize(0.05)
   l.Draw("a");
 
-  c.SaveAs("phiDistroRPC{}.png".format(layer))
+  c.SaveAs("plotsForApproval/phiDistroRPC{}.png".format(layer))
+  c.SaveAs("plotsForApproval/phiDistroRPC{}.pdf".format(layer))
+  c.SaveAs("plotsForApproval/phiDistroRPC{}.C".format(layer))
 
 ## Null -> Null
 ## The main function uses the rest of functions to create a TGraph dictionary
 ## in the agreed granularity then distribute it to the plotting function.
 def main():
-  #print "Retrieving phi Info"
+  print "Retrieving phi Info"
   phiList = phiWheel_lists_RPC()
-  #print "Retrieving rates Info"
+  print "Retrieving rates Info"
   ratesList  = ratesWheel_lists_RPC()
-  #print "Creating phi-rates-id dictionary"
+  print "Creating phi-rates-id dictionary"
   dictionary0 = the_list(phiList,ratesList)
-  #print "Taking the granularity average"
+  print "Taking the granularity average"
   dictionary1 = granularity_average(dictionary0)
-  return dictionary1
-  #print "Generating TGraphs"
+  #return dictionary1
+  print "Generating TGraphs"
   tgraphsDictionary = generate_tgraphs(dictionary1)
-  #print tgraphsDictionary
-  return tgraphsDictionary #Use this return for the ratio plotting script
+  print tgraphsDictionary
+  #return tgraphsDictionary #Use this return for the ratio plotting script
   print "Creating plots"
   wheels = ["W-2", "W-1", "W+0", "W+1", "W+2"]
   for w in wheels:

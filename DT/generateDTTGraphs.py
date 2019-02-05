@@ -323,12 +323,11 @@ def main():
   list0 = the_list()
   #print "Creating the dictionary with the standard names"
   dict0 = the_dictionary(list0)
-  return dict0  ######## Quita el comentario para hacer el ratio
+  return dict0  ######## Comment this return in order to print all the plots for DT 
   #print "Creating the dictionary with TGraph objects"
   dict1 = generate_tgraphs(dict0)
   #print "Do we really need the plots?"
   #print dict1
-  #return dict1
   print "Creating plots"
 
   wheels = ["W-2", "W-1", "W+0", "W+1", "W+2"]
