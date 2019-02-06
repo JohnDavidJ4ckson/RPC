@@ -3,14 +3,12 @@ import re
 import json
 import sys
 import getopt
-from ROOT import *
-from ROOT import gPad
-from ROOT import TCanvas, TGraph
-from ROOT import gROOT, TFile
+from ROOT import gPad, TVector3, kRed, kBlue, kBlack
+from ROOT import TCanvas, TGraph, TMultiGraph
+from ROOT import gROOT, TFile, TPaveText, TLegend
 from array import array
 from numpy import median
 import numpy as np
-from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 
@@ -1066,9 +1064,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   c1.SaveAs("etaDistroDetailRB2.gif")
   c1.SaveAs("etaDistroDetailRB2.C")
 
-  c1.Close() 
+#  c1.Close() 
   
-  print "is there an error here?"
 
 if __name__ == "__main__":
   endcapSectionList = ["RE-1", "RE-1", "RE-2", "RE-2", "RE-2", "RE-3", "RE-4", "RE+1", "RE+1","RE+2", "RE+2", "RE+2", "RE+3", "RE+4"]
