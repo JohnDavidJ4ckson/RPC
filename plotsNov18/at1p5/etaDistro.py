@@ -3,14 +3,12 @@ import re
 import json
 import sys
 import getopt
-from ROOT import *
-from ROOT import gPad
-from ROOT import TCanvas, TGraph
-from ROOT import gROOT
+from ROOT import gPad, TVector3, kRed, kBlue, kBlack
+from ROOT import TCanvas, TGraph, TMultiGraph
+from ROOT import gROOT, TFile, TPaveText, TLegend
 from array import array
 from numpy import median
 import numpy as np
-from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 
@@ -22,7 +20,7 @@ def is_number(s):
         return False
 
 def ratesEndcap_list():
-  runNumfile = "../ratesAt5_end18.json" #"output_rolls2018.json"
+  runNumfile = "../ratesAt1p5_end18.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   rolls = ["_A","_B","_C"] #, "_D"]
@@ -50,7 +48,7 @@ def ratesEndcap_list():
   return [names, rates]
 
 def ratesWheel_lists():
-  runNumfile = "../ratesAt5_end18.json" #"output_rolls2018.json"
+  runNumfile = "../ratesAt1p5_end18.json" #"output_rolls2018.json"
   with open(runNumfile) as dataf:
     rates1 = json.loads(dataf.read())
   wheels = ["0", "1", "2"]
@@ -592,6 +590,39 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr13E.GetXaxis().SetTitle( '#eta' )
   gr13E.GetYaxis().SetTitle( 'RPC single hit rate (Hz/cm^{2})' )
 
+  print "----- Reading Fluka Info -----"
+  f = TFile.Open("../FlukaEta.root")
+  flukaRB1 = f.RB1
+  flukaRB1.SetMarkerColor( 2 )
+  flukaRB1.SetMarkerStyle( 20 )
+  flukaRB2 = f.RB2
+  flukaRB2.SetMarkerColor( 2 )
+  flukaRB2.SetMarkerStyle( 20 )
+  flukaRB3 = f.RB3
+  flukaRB3.SetMarkerColor( 2 )
+  flukaRB3.SetMarkerStyle( 20 )
+  flukaRB4 = f.RB4
+  flukaRB4.SetMarkerColor( 2 )
+  flukaRB4.SetMarkerStyle( 20 )
+
+  flukaRE1 = f.RE1
+  flukaRE1.SetMarkerColor( 2 )
+  flukaRE1.SetMarkerStyle( 4 )
+  flukaRE2 = f.RE2
+  flukaRE2.SetMarkerColor( 2 )
+  flukaRE2.SetMarkerStyle( 4 )
+  flukaRE3 = f.RE3
+  flukaRE3.SetMarkerColor( 2 )
+  flukaRE3.SetMarkerStyle( 4 )
+  flukaRE4 = f.RE4
+  flukaRE4.SetMarkerColor( 2 )
+  flukaRE4.SetMarkerStyle( 4 )
+
+
+  print "I did open the file"
+  print flukaRB1, flukaRE4
+
+
   print "----- Creating TCanvas -----"
   H = 800
   W = 1600
@@ -616,11 +647,18 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gPad.SetLogy()
   print " ------------ Creating TMultiGraph -----------"
   mg1 = TMultiGraph()
-  #graphAxis(mg1)
+
+  gr0E.SetMarkerColor( 4 )
+  gr0W.SetMarkerColor( 4 )
+  gr7E.SetMarkerColor( 4 )
+  gr7W.SetMarkerColor( 4 )
+
   mg1.Add(gr0E,"AP")
   mg1.Add(gr0W,"AP")
   mg1.Add(gr7E,"AP")
   mg1.Add(gr7W,"AP")
+  mg1.Add(flukaRB1,"AP")
+  mg1.Add(flukaRE1,"AP")
   mg1.Draw("a")
   mg1.SetTitle( 'RB1in')
   mg1.GetXaxis().SetTitle( '#eta' )
@@ -646,7 +684,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt.SetTextSize(0.03)
   pvtxt.Draw()
   pvtxt100 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt100.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pvtxt100.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt100.SetFillStyle(0)
   pvtxt100.SetBorderSize(0)
   pvtxt100.SetTextSize(0.03)
@@ -663,13 +701,13 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gr01.SetMarkerStyle( 24 )
   gr01.SetMarkerSize( 1.5 )
 
-  legend0 = TLegend(0.2, 0.7, .8, .9)
+  legend0 = TLegend(0.2, 0.75, .8, .95)
   legend0.SetNColumns(1)
   legend0.AddEntry(gr00, "Barrel", "p")
   legend0.AddEntry(gr01, "Endcaps", "p")
   legend0.Draw("a same")
 
-  legendi = TLegend(0.2, 0.2, .8, .6)
+  legendi = TLegend(0.2, 0.15, .8, .69)
   legendi.SetNColumns(1)
   legendi.AddEntry(gr7W,  "RB1in  + RE1" , "p")
   legendi.AddEntry(gr8W,  "RB1out + RE1" , "p")
@@ -678,16 +716,25 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
 #  legendi.AddEntry(gr11W, "RB2out + RE2" , "p")
   legendi.AddEntry(gr12W, "RB3 + RE3"    , "p")
   legendi.AddEntry(gr13W, "RB4 + RE4"    , "p")
+  legendi.AddEntry(flukaRB1, "Fluka Simulation"    , "p")
   legendi.SetTextSize(0.05)
   legendi.Draw("a");
 
   canv.cd(3)
   gPad.SetLogy()
   mg2 = TMultiGraph()
+
+  gr1E.SetMarkerColor( 4 )
+  gr1W.SetMarkerColor( 4 )
+  gr8E.SetMarkerColor( 4 )
+  gr8W.SetMarkerColor( 4 )
+
   mg2.Add(gr1E,"AP")
   mg2.Add(gr1W,"AP")
   mg2.Add(gr8E,"AP")
   mg2.Add(gr8W,"AP")
+  mg2.Add(flukaRB1,"AP")
+  mg2.Add(flukaRE1,"AP")
   mg2.Draw("a")
   mg2.SetTitle( 'RB1out')
   mg2.GetXaxis().SetTitle( '#eta' )
@@ -713,7 +760,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt3.SetTextSize(0.03)
   pvtxt3.Draw()
   pvtxt4 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt4.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pvtxt4.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt4.SetFillStyle(0)
   pvtxt4.SetBorderSize(0)
   pvtxt4.SetTextSize(0.03)
@@ -723,10 +770,18 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gPad.SetLogy()
   mg3 = TMultiGraph()
   #graphAxis(mg3)
+
+  gr2E.SetMarkerColor( 4 )
+  gr2W.SetMarkerColor( 4 )
+  gr9E.SetMarkerColor( 4 )
+  gr9W.SetMarkerColor( 4 )
+
   mg3.Add(gr2E,"AP")
   mg3.Add(gr2W,"AP")
   mg3.Add(gr9E,"AP")
   mg3.Add(gr9W,"AP")
+  mg3.Add(flukaRB2,"AP")
+  mg3.Add(flukaRE2,"AP")
   mg3.Draw("a")
   mg3.SetTitle( 'RB2')
   mg3.GetXaxis().SetTitle( '#eta' )
@@ -752,7 +807,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt5.SetTextSize(0.03)
   pvtxt5.Draw()
   pvtxt6 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt6.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pvtxt6.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt6.SetFillStyle(0)
   pvtxt6.SetBorderSize(0)
   pvtxt6.SetTextSize(0.03)
@@ -762,10 +817,18 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gPad.SetLogy()
   mg4 = TMultiGraph()
   #graphAxis(mg4)
+
+  gr5E.SetMarkerColor( 4 )
+  gr5W.SetMarkerColor( 4 )
+  gr12E.SetMarkerColor( 4 )
+  gr12W.SetMarkerColor( 4 )
+
   mg4.Add(gr5E,"AP")
   mg4.Add(gr5W,"AP")
   mg4.Add(gr12E,"AP")
   mg4.Add(gr12W,"AP")
+  mg4.Add(flukaRB3,"AP")
+  mg4.Add(flukaRE3,"AP")
   mg4.Draw("a")
   mg4.SetTitle( 'RB3')
   mg4.GetXaxis().SetTitle( '#eta' )
@@ -791,7 +854,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt7.SetTextSize(0.03)
   pvtxt7.Draw()
   pvtxt8 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt8.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pvtxt8.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt8.SetFillStyle(0)
   pvtxt8.SetBorderSize(0)
   pvtxt8.SetTextSize(0.03)
@@ -801,10 +864,18 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   gPad.SetLogy()
   mg5 = TMultiGraph()
   #graphAxis(mg5)
+
+  gr6E.SetMarkerColor( 4 )
+  gr6W.SetMarkerColor( 4 )
+  gr13E.SetMarkerColor( 4 )
+  gr13W.SetMarkerColor( 4 )
+
   mg5.Add(gr6E,"AP")
   mg5.Add(gr6W,"AP")
   mg5.Add(gr13E,"AP")
   mg5.Add(gr13W,"AP")
+  mg5.Add(flukaRB4,"AP")
+  mg5.Add(flukaRE4,"AP")
   mg5.Draw("a")
   mg5.SetTitle( 'RB4')
   mg5.GetXaxis().SetTitle( '#eta' )
@@ -830,7 +901,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt10.SetTextSize(0.03)
   pvtxt10.Draw()
   pvtxt9 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvtxt9.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pvtxt9.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvtxt9.SetFillStyle(0)
   pvtxt9.SetBorderSize(0)
   pvtxt9.SetTextSize(0.03)
@@ -867,6 +938,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   mg.Add(gr7W,"AP")
   mg.Add(gr1W,"AP")
   mg.Add(gr8W,"AP")
+  mg.Add(flukaRB1,"AP")
+  mg.Add(flukaRE1,"AP")
   mg.Draw("a")
   mg.SetTitle( 'RB1in')
   mg.GetXaxis().SetTitle( '#eta' )
@@ -892,7 +965,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvt.SetTextSize(0.03)
   pvt.Draw()
   pvt1 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pvt1.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pvt1.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pvt1.SetFillStyle(0)
   pvt1.SetBorderSize(0)
   pvt1.SetTextSize(0.03)
@@ -903,6 +976,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legenda.AddEntry(gr0E, "RE1", "p")
   legenda.AddEntry(gr0W, "RB1in", "p")
   legenda.AddEntry(gr1W, "RB1out", "p")
+  legenda.AddEntry(flukaRB1, "Fluka Simulation", "p")
   legenda.SetTextSize(0.05)
   legenda.Draw("a");
 
@@ -929,12 +1003,22 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
 
   print " ------------ Creating TMultiGraph -----------"
   mgd2 = TMultiGraph()
+
+  gr3E.SetMarkerColor( 4 )
+  gr3W.SetMarkerColor( 4 )
+  gr10E.SetMarkerColor( 4 )
+  gr10W.SetMarkerColor( 4 )
+  gr4W.SetMarkerColor( 4 )
+  gr11W.SetMarkerColor( 4 )
+
   mgd2.Add(gr3E,"AP")
   mgd2.Add(gr3W,"AP")
   mgd2.Add(gr10E,"AP")
   mgd2.Add(gr10W,"AP")
   mgd2.Add(gr4W,"AP")
   mgd2.Add(gr11W,"AP")
+  mgd2.Add(flukaRB2,"AP")
+  mgd2.Add(flukaRE2,"AP")
   mgd2.Draw("a")
   mgd2.SetTitle( 'RB1in')
   mgd2.GetXaxis().SetTitle( '#eta' )
@@ -960,7 +1044,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pv.SetTextSize(0.03)
   pv.Draw()
   pv1 = TPaveText(.7,0.97,.9,0.97,"NDC")
-  pv1.AddText('5.0 #times 10^{34} Hz/cm^{2} (13 TeV)')
+  pv1.AddText('1.5 #times 10^{34} Hz/cm^{2} (13 TeV)')
   pv1.SetFillStyle(0)
   pv1.SetBorderSize(0)
   pv1.SetTextSize(0.03)
@@ -971,6 +1055,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legendd2.AddEntry(gr3E, "RE2", "p")
   legendd2.AddEntry(gr3W, "RB2in", "p")
   legendd2.AddEntry(gr4W, "RB2out", "p")
+  legendd2.AddEntry(flukaRB2, "Fluka Simulation", "p")
   legendd2.SetTextSize(0.05)
   legendd2.Draw("a");
 
@@ -979,9 +1064,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   c1.SaveAs("etaDistroDetailRB2.gif")
   c1.SaveAs("etaDistroDetailRB2.C")
 
-  c1.Close() 
+#  c1.Close() 
   
-  print "is there an error here?"
 
 if __name__ == "__main__":
   endcapSectionList = ["RE-1", "RE-1", "RE-2", "RE-2", "RE-2", "RE-3", "RE-4", "RE+1", "RE+1","RE+2", "RE+2", "RE+2", "RE+3", "RE+4"]
