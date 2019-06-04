@@ -52,12 +52,90 @@ def main():
   wp2 = ['W+2_RB1in','W+2_RB1out','W+2_RB2in','W+2_RB2out','W+2_RB3','W+2_RB4']
   re1 = ['RE+1_R1', 'RE+1_R2', 'RE+1_R3']
 
+
+  ## This cases are for an extra test of June 4th
+  wheel_helper  = ['_S02', '_S03', '_S04', '_S05', '_S06', '_S07']
+  endcap_helper = []
+  wp0_test = ['W+0_RB1in','W+0_RB1out','W+0_RB2in','W+0_RB2out','W+0_RB3','W+0_RB4']
+  re1_test = ['RE+1_R1', 'RE+1_R2', 'RE+1_R3']
+  re2_test = ['RE+1_R1', 'RE+1_R2', 'RE+1_R3']
+  re3_test = ['RE+1_R1', 'RE+1_R2', 'RE+1_R3']
+
+  rack76 = ['W+0_RB1in_S02', 'W+0_RB1out_S02',
+            'W+0_RB2in_S02', 'W+0_RB2in_S02',
+            'W+0_RB3_S02',	
+            'W+0_RB4_S02',
+            'W+0_RB1in_S03', 'W+0_RB1out_S03',
+            'W+0_RB2in_S03', 'W+0_RB2out_S03',
+            'W+0_RB3_S03',	
+            'W+0_RB4_S03',
+            'W+0_RB1in_S04', 'W+0_RB1out_S04',
+            'W+0_RB2in_S04', 'W+0_RB2out_S04',
+            'W+0_RB3_S04',
+            'W+0_RB4_S04',
+            'W+0_RB1in_S05', 'W+0_RB1out_S05',
+            'W+0_RB2in_S05', 'W+0_RB2out_S05', 
+            'W+0_RB3_S05',
+            'W+0_RB4_S05',
+            'W+0_RB1in_S06', 'W+0_RB1out_S06',
+            'W+0_RB2in_S06', 'W+0_RB2out_S06',
+            'W+0_RB3_S06',
+            'W+0_RB4_S06',
+            'W+0_RB1in_S07', 'W+0_RB1out_S07',
+            'W+0_RB2in_S07', 'W+0_RB2out_S07',
+            'W+0_RB3_S07',
+            'W+0_RB4_S07' ]
+  
+  rack83 = ['RE+1_R2_CH06', 'RE+1_R2_CH11', 
+            'RE+1_R2_CH12', 'RE+1_R2_CH17',      
+            'RE+1_R2_CH18', 'RE+1_R2_CH23',    
+            'RE+1_R2_CH24', 'RE+1_R2_CH29',  
+            'RE+1_R2_CH30', 'RE+1_R2_CH35',       
+            'RE+1_R2_CH36', 'RE+1_R2_CH05',     
+            'RE+1_R3_CH06', 'RE+1_R3_CH11',   
+            'RE+1_R3_CH12', 'RE+1_R3_CH17', 
+            'RE+1_R3_CH18', 'RE+1_R3_CH23',      
+            'RE+1_R3_CH24', 'RE+1_R3_CH29',    
+            'RE+1_R3_CH30', 'RE+1_R3_CH35',  
+            'RE+1_R3_CH36', 'RE+1_R3_CH05']     
+
+  rack86 = ['RE+4_R2_CH01',  'RE+4_R3_CH01', 'RE+4_R2_CH02', 'RE+4_R3_CH02',   
+            'RE+4_R2_CH03',  'RE+4_R3_CH03', 'RE+4_R2_CH04', 'RE+4_R3_CH04',   
+            'RE+4_R2_CH05',  'RE+4_R3_CH05', 'RE+4_R2_CH06', 'RE+4_R3_CH06',   
+            'RE+4_R2_CH07',  'RE+4_R3_CH07', 'RE+4_R2_CH08', 'RE+4_R3_CH08',   
+            'RE+4_R2_CH09',  'RE+4_R3_CH09', 'RE+4_R2_CH10', 'RE+4_R3_CH10',   
+            'RE+4_R2_CH11',  'RE+4_R3_CH11', 'RE+4_R2_CH12', 'RE+4_R3_CH12',   
+            'RE+4_R2_CH13',  'RE+4_R3_CH13', 'RE+4_R2_CH14', 'RE+4_R3_CH14',   
+            'RE+4_R2_CH15',  'RE+4_R3_CH15', 'RE+4_R2_CH16', 'RE+4_R3_CH16',   
+            'RE+4_R2_CH17',  'RE+4_R3_CH17', 'RE+4_R2_CH18', 'RE+4_R3_CH18',   
+            'RE+4_R2_CH19',  'RE+4_R3_CH19', 'RE+4_R2_CH20', 'RE+4_R3_CH20',   
+            'RE+4_R2_CH21',  'RE+4_R3_CH21', 'RE+4_R2_CH22', 'RE+4_R3_CH22',   
+            'RE+4_R2_CH35',  'RE+4_R3_CH35', 'RE+4_R2_CH36', 'RE+4_R3_CH36']   
+  
+  rack68 = ['RE-4_R2_CH01', 'RE-4_R3_CH02',  'RE-4_R2_CH01', 'RE-4_R3_CH02',    
+            'RE-4_R2_CH03', 'RE-4_R3_CH04',  'RE-4_R2_CH03', 'RE-4_R3_CH04',    
+            'RE-4_R2_CH05', 'RE-4_R3_CH06',  'RE-4_R2_CH05', 'RE-4_R3_CH06',    
+            'RE-4_R2_CH07', 'RE-4_R3_CH08',  'RE-4_R2_CH07', 'RE-4_R3_CH08',    
+            'RE-4_R2_CH09', 'RE-4_R3_CH10',  'RE-4_R2_CH09', 'RE-4_R3_CH10',    
+            'RE-4_R2_CH11', 'RE-4_R3_CH12',  'RE-4_R2_CH11', 'RE-4_R3_CH12',    
+            'RE-4_R2_CH13', 'RE-4_R3_CH14',  'RE-4_R2_CH13', 'RE-4_R3_CH14',    
+            'RE-4_R2_CH15', 'RE-4_R3_CH16',  'RE-4_R2_CH15', 'RE-4_R3_CH16',    
+            'RE-4_R2_CH17', 'RE-4_R3_CH18',  'RE-4_R2_CH17', 'RE-4_R3_CH18',    
+            'RE-4_R2_CH19', 'RE-4_R3_CH20',  'RE-4_R2_CH19', 'RE-4_R3_CH20',    
+            'RE-4_R2_CH21', 'RE-4_R3_CH22',  'RE-4_R2_CH21', 'RE-4_R3_CH22',    
+            'RE-4_R2_CH35', 'RE-4_R3_CH36',  'RE-4_R2_CH35', 'RE-4_R3_CH36']   
+
   wm2gr  = {}
   wm1gr  = {}
   wp0gr  = {}
   wp1gr  = {}
   wp2gr  = {}
   re1gr  = {}
+
+  rack76gr = {}
+  rack83gr = {}
+  rack86gr = {}
+  rack68gr = {}
 
   myrun = [297662,301528,297657,297658,297663,296866,301969,302026,301179,297099,297079,297168,
            297211,297494,300673,301141,301383,300104,299394,297598,300364,297670,296070,296104,
@@ -90,12 +168,12 @@ def main():
 
   #print "number of runs: ", len(runInfo.keys())
   #print runInfo['323475']
-  
   j = 0
   for i,run in enumerate(sorted(runInfo.keys())):
     #print i, run
     #print j
-    #if j > 13: break
+    #if j > 23: break
+    #j +=1
     if int(run) in myrun: continue  
     if year == 2016 and int(run) > 280385: continue
     if float(runInfo[run]['time']) < 120: continue 
@@ -110,7 +188,7 @@ def main():
     if not os.path.exists(RATEPATH+str(run)):
       continue
     runrate = RPCRateRun( run )
-    #print runrate
+    #print runrate.rates_['W+0_RB4+_S01_Forward']['ratesquarecm']
     #print options.th
     #runrate.correctRates(float(options.th))
     #runrate.excludeRolls(excludedRolls)
@@ -122,29 +200,51 @@ def main():
       #print wm2[d]
       #print runrate.averageByS(wm2[d])[wm2[d]]
       #print runrate.averageByS('RE+1_R1')['RE+1_R1']
-      means[0][wm2[d].split('_')[1]] = runrate.averageByS(wm2[d])[wm2[d]]
-      means[1][wm1[d].split('_')[1]] = runrate.averageByS(wm1[d])[wm1[d]]
-      means[2][wp0[d].split('_')[1]] = runrate.averageByS(wp0[d])[wp0[d]]
-      means[3][wp1[d].split('_')[1]] = runrate.averageByS(wp1[d])[wp1[d]]
-      means[4][wp2[d].split('_')[1]] = runrate.averageByS(wp2[d])[wp2[d]]
       
+      #means[0][wm2[d].split('_')[1]] = runrate.averageByS(wm2[d])[wm2[d]]
+      #means[1][wm1[d].split('_')[1]] = runrate.averageByS(wm1[d])[wm1[d]]
+      means[2][wp0[d].split('_')[1]] = runrate.averageByS(wp0[d])[wp0[d]]
+      #means[3][wp1[d].split('_')[1]] = runrate.averageByS(wp1[d])[wp1[d]]
+      #means[4][wp2[d].split('_')[1]] = runrate.averageByS(wp2[d])[wp2[d]]
       continue
     #print re1[0].split('_')[1]
     #print re1[0]
-    for d in range(3):
-        means[5][re1[d].split('_')[1]] = runrate.averageByS(re1[d])[re1[d]]
+    
+    rackMeans = [ {}, {}, {}, {} ]
+    for d in range(36):
+        rackMeans[0][rack76[d].split('_')[1]] = runrate.averageByS(rack76[d])[rack76[d]]
         continue
+    for d in range(24):
+        rackMeans[1][rack83[d].split('_')[1]] = runrate.averageByS(rack83[d])[rack83[d]]
+        rackMeans[2][rack86[d].split('_')[1]] = runrate.averageByS(rack86[d])[rack86[d]]
+        continue
+    for d in range(48):
+        rackMeans[3][rack68[d].split('_')[1]] = runrate.averageByS(rack68[d])[rack68[d]]
+        continue
+    #for d in range(3):
+    #    means[5][re1[d].split('_')[1]] = runrate.averageByS(re1[d])[re1[d]]
+    #    continue
+    
+    
     #print means[4]
     #print means[5]
     #print i,run
-    fillgraphs( wm2gr,means[0],runInfo[run]['InstLumiD'],j,run,False )
-    fillgraphs( wm1gr,means[1],runInfo[run]['InstLumiD'],j,run,False )
+    #print means[2]
+    #print runInfo[run]['InstLumiD']
+    
+    #fillgraphs( wm2gr,means[0],runInfo[run]['InstLumiD'],j,run,False )
+    #fillgraphs( wm1gr,means[1],runInfo[run]['InstLumiD'],j,run,False )
     fillgraphs( wp0gr,means[2],runInfo[run]['InstLumiD'],j,run,False )
-    fillgraphs( wp1gr,means[3],runInfo[run]['InstLumiD'],j,run,False )
-    fillgraphs( wp2gr,means[4],runInfo[run]['InstLumiD'],j,run,False )
+    #fillgraphs( wp1gr,means[3],runInfo[run]['InstLumiD'],j,run,False )
+    #fillgraphs( wp2gr,means[4],runInfo[run]['InstLumiD'],j,run,False )
     fillgraphs( re1gr,means[5],runInfo[run]['InstLumiD'],j,run,False ) 
-
-    j+=1
+    
+    fillgraphs( rack76gr,rackMeans[0],runInfo[run]['InstLumiD'],j,run,False )
+    fillgraphs( rack83gr,rackMeans[1],runInfo[run]['InstLumiD'],j,run,False )
+    fillgraphs( rack86gr,rackMeans[2],runInfo[run]['InstLumiD'],j,run,False )
+    fillgraphs( rack68gr,rackMeans[3],runInfo[run]['InstLumiD'],j,run,False )
+    
+    j += 1
     del runrate
   #ff.Close()
   #rfile.close()
@@ -191,16 +291,22 @@ def main():
   alldics.update(wp1gr)
   alldics.update(wp2gr)
   alldics.update(re1gr)
+
+  alldics.update(rack76gr)
+  alldics.update(rack83gr)
+  alldics.update(rack86gr)
+  alldics.update(rack68gr)
+
   #print alldics
   #print options.outfile
   torootFile(alldics,'name')
 
   #rateEvalWm2 = printmultigraph(wm2gr, rbsort,  plotoptionsRBs, options.outfile+"_RB_Wm2", "W-2", year, doext, False, rbmax)
   #rateEvalWm1 = printmultigraph(wm1gr, rbsort,  plotoptionsRBs, options.outfile+"_RB_Wm1", "W-1", year, doext, False, 20.0)
-  #rateEvalWp0 = printmultigraph(wp0gr, rbsort,  plotoptionsRBs, options.outfile+"_RB_Wp0", "W+0", year, doext, False, 15.0)
+  rateEvalWp0 = printmultigraph(wp0gr, rbsort,  plotoptionsRBs, "test_RB_Wp0", "W+0", year, doext, False, 15.0)
   #rateEvalWp1 = printmultigraph(wp1gr, rbsort,  plotoptionsRBs, options.outfile+"_RB_Wp1", "W+1", year, doext, False, 20.0)
   #rateEvalWp2 = printmultigraph(wp2gr, rbsort,  plotoptionsRBs, 'name'+"_RB_Wp2", "W+2", year, doext, False, rbmax)
-  
+
   #print re1gr
   for k, v in re1gr.items():
       #print k
@@ -252,6 +358,11 @@ def main():
   #x2, y2 = zip(*mergedXY)
   #print x2, x2[4]
   #print y2, y2[0]
+
+  rateEvalWp0 = printmultigraph(rack76gr, rbsort,  plotoptionsRBs, "rack76", "rack76",  year, doext, False, 15.0)
+  rateEvalWp0 = printmultigraph(rack83gr, rbsort,  plotoptionsRE1, "rack83", "rack83", year, doext, False, 15.0)
+  rateEvalWp0 = printmultigraph(rack86gr, rbsort,  plotoptionsRE1, "rack86", "rack86", year, doext, False, 15.0)
+  rateEvalWp0 = printmultigraph(rack68gr, rbsort,  plotoptionsRE1, "rack68", "rack68", year, doext, False, 15.0)
 
   rateEvalRe1 = printmultigraph(re1gr, ringsort,  plotoptionsRE1, 'name', 'RE+1', year, doext, False, remax)
 
