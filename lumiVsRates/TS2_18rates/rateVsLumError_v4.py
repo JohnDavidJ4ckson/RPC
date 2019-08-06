@@ -1,4 +1,4 @@
-import os, json
+import os, json, math
 from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import normalize
 from sklearn import metrics
@@ -6,9 +6,9 @@ from array import array
 from numpy import median
 from optparse import OptionParser
 from RPCRateRun import *
-from ROOT import TGraph, TGraphErrors,TMultiGraph, TLegend, TCanvas, TAxis, gStyle, TLatex, TFile, TLatex
-RATEPATH   = '/Users/dan/detector/RPC/lumiVsRates/TS2_18rates/selRuns18/run' 
-
+from ROOT import gPad, TGraph, TGraphErrors,TMultiGraph, TLegend, TCanvas, TAxis, gStyle, TLatex, TFile, TLatex
+from ROOT import kGreen, TPaveText, TF1 
+RATEPATH   = '/Users/dan/detector/rates/selRuns18/run'
 def main():
 
   parser = OptionParser()
@@ -170,10 +170,20 @@ def main():
   #print "number of runs: ", len(runInfo.keys())
   #print runInfo['323475']
   j = 0
+
+  listXrack76 = array('d')
+  listYrack76 = array('d')
+  listXrack83 = array('d')
+  listYrack83 = array('d')
+  listXrack86 = array('d')
+  listYrack86 = array('d')
+  listXrack68 = array('d')
+  listYrack68 = array('d')
+
   for i,run in enumerate(sorted(runInfo.keys())):
     #print i, run
     #print j
-    #if j > 23: break
+    #if j > 13: break
     #j +=1
     if int(run) in myrun: continue  
     if year == 2016 and int(run) > 280385: continue
@@ -213,18 +223,21 @@ def main():
     
     rackMeans = [ {}, {}, {}, {} ]
     for d in range(36):
+        #print rack76[d].split('_')[1]
         #print rack76[d]
-        print runrate.averageByS(rack76[d])[rack76[d]]
-        rackMeans[0][rack76[d].split('_')[1]] = runrate.averageByS(rack76[d])[rack76[d]]
+        #print runrate.averageByS(rack76[d])[rack76[d]]
+        #print runrate.averageByS(rack76[d])
+        #print runrate.averageByS(rack76[d])[rack76[d]]
+        #rackMeans[0][rack76[d].split('_')[1]] = runrate.averageByS(rack76[d])[rack76[d]]
+        rackMeans[0][rack76[d]] = runrate.averageByS(rack76[d])[rack76[d]]
+        #print  rackMeans[0]
         continue
-    print rackMeans[0][rack76[d].split('_')[1]]
-    return
     for d in range(24):
-        rackMeans[1][rack83[d].split('_')[1]] = runrate.averageByS(rack83[d])[rack83[d]]
-        rackMeans[2][rack86[d].split('_')[1]] = runrate.averageByS(rack86[d])[rack86[d]]
+        rackMeans[1][rack83[d]] = runrate.averageByS(rack83[d])[rack83[d]]
+        rackMeans[2][rack86[d]] = runrate.averageByS(rack86[d])[rack86[d]]
         continue
     for d in range(48):
-        rackMeans[3][rack68[d].split('_')[1]] = runrate.averageByS(rack68[d])[rack68[d]]
+        rackMeans[3][rack68[d]] = runrate.averageByS(rack68[d])[rack68[d]]
         continue
     #for d in range(3):
     #    means[5][re1[d].split('_')[1]] = runrate.averageByS(re1[d])[re1[d]]
@@ -239,19 +252,160 @@ def main():
     
     #fillgraphs( wm2gr,means[0],runInfo[run]['InstLumiD'],j,run,False )
     #fillgraphs( wm1gr,means[1],runInfo[run]['InstLumiD'],j,run,False )
-    fillgraphs( wp0gr,means[2],runInfo[run]['InstLumiD'],j,run,False )
+    ###fillgraphs( wp0gr,means[2],runInfo[run]['InstLumiD'],j,run,False )
     #fillgraphs( wp1gr,means[3],runInfo[run]['InstLumiD'],j,run,False )
     #fillgraphs( wp2gr,means[4],runInfo[run]['InstLumiD'],j,run,False )
-    fillgraphs( re1gr,means[5],runInfo[run]['InstLumiD'],j,run,False ) 
+    ###fillgraphs( re1gr,means[5],runInfo[run]['InstLumiD'],j,run,False ) 
+
+
+
+    #rack76gr['main'] = TGraphErrors()
+    #rack83gr['main'] = TGraphErrors()
+    #rack86gr['main'] = TGraphErrors()
+    #rack68gr['main'] = TGraphErrors()
+
+
+    #print rack76gr
+    #print rackMeans[0]
+    #print runInfo[run]['InstLumiD']
+
+    lumiValue = float( runInfo[run]['InstLumiD'])
+    rateValueList76 = [float(v[0]) for k,v in rackMeans[0].items()]
+    rateValue76 = sum(rateValueList76) / len(rateValueList76)
+    rateValueList83 = [float(v[0]) for k,v in rackMeans[1].items()]
+    rateValue83 = sum(rateValueList83) / len(rateValueList83)
+    rateValueList86 = [float(v[0]) for k,v in rackMeans[2].items()]
+    rateValue86 = sum(rateValueList86) / len(rateValueList86)
+    rateValueList68 = [float(v[0]) for k,v in rackMeans[3].items()]
+    rateValue68 = sum(rateValueList68) / len(rateValueList68)
+
     
-    fillgraphs( rack76gr,rackMeans[0],runInfo[run]['InstLumiD'],j,run,False )
-    fillgraphs( rack83gr,rackMeans[1],runInfo[run]['InstLumiD'],j,run,False )
-    fillgraphs( rack86gr,rackMeans[2],runInfo[run]['InstLumiD'],j,run,False )
-    fillgraphs( rack68gr,rackMeans[3],runInfo[run]['InstLumiD'],j,run,False )
-   
+    listXrack76.append(lumiValue)
+    listYrack76.append(rateValue76)
+    listXrack83.append(lumiValue)
+    listYrack83.append(rateValue83)
+    listXrack86.append(lumiValue)
+    listYrack86.append(rateValue86)
+    listXrack68.append(lumiValue)
+    listYrack68.append(rateValue68)
+
+    
+    #print rack76gr['main']
+    #print rack83gr['main']
+    #print rack86gr['main']
+    #print rack68gr['main']
     j += 1
     del runrate
   
+  print listXrack76 
+  print listYrack83
+  print listXrack86
+  print listYrack68
+
+  rack76gr = create_tgraph(listXrack76, listYrack76)
+  rack83gr = create_tgraph(listXrack83, listYrack83)
+  rack86gr = create_tgraph(listXrack86, listYrack86)
+  rack68gr = create_tgraph(listXrack68, listYrack68)
+
+  print rack76gr, rack83gr, rack86gr, rack68gr
+
+  dbscan_for_tgraph(rack76gr)
+  dbscan_for_tgraph(rack83gr)
+  dbscan_for_tgraph(rack86gr)
+  dbscan_for_tgraph(rack68gr)
+
+
+  plot(rack76gr, '76')
+  plot(rack83gr, '83')
+  plot(rack86gr, '86')
+  plot(rack68gr, '68')
+
+  return
+
+## list, string --> Nul
+## The function receives a list with TGraphs for each RPC Layer
+## and the name of a wheel. These are used to create a plot 
+def plot(tgr, n): #(List, layer, tgrDict):
+    H = 1600
+    W = 800
+    #print "----- Creating Third TCanvas -----"
+    c = TCanvas("c", "Canvas",W,H)
+    ymax = 0.0
+
+    c.SetLeftMargin(0.15);
+    c.SetRightMargin(0.06);
+    c.SetTopMargin(0.09);
+    c.SetBottomMargin(0.14);
+    #gPad.SetGrid()
+    gPad.SetTicks()
+    #gPad.SetLogy()
+
+    mg = TMultiGraph()
+
+    tgr.SetMarkerColor( kGreen+3 )
+    tgr.SetMarkerStyle( 21 )
+    tgr.SetMarkerSize( 1.5 )
+    mg.Add(tgr,'AP')
+    mg.Draw("a")
+
+    l = TLegend(0.42,0.15,0.82,0.35)
+    l.SetFillColor(0)
+    l.SetBorderSize(0)
+    l.SetTextSize(0.03)
+    l.SetNColumns(1)
+    l.AddEntry(tgr, "CMS (13TeV)", "p")
+
+    mg.SetTitle('')
+    #mg.SetMaximum(ymax*1.1)
+    mg.GetXaxis().SetTitle('Instantaneous Luminosity 10^{34} cm^{-2} s^{-1}')
+    mg.GetXaxis().SetLabelFont(42)
+    mg.GetXaxis().SetLabelOffset(0.007)
+    mg.GetXaxis().SetLabelSize(0.043)
+    mg.GetXaxis().SetTitleSize(0.03)
+    mg.GetXaxis().SetTitleOffset(1.56)
+    mg.GetXaxis().SetTitleFont(42)
+    mg.GetYaxis().SetTitle('rate (Hz/cm^{2})')
+    mg.GetYaxis().SetLabelFont(42)
+    mg.GetYaxis().SetLabelOffset(0.008)
+    mg.GetYaxis().SetLabelSize(0.02)
+    mg.GetYaxis().SetTitleSize(0.03)
+    mg.GetYaxis().SetTitleOffset(1.37)
+    mg.GetYaxis().SetTitleFont(42)
+
+    pv = TPaveText(.08,0.94,.45,0.94,"NDC")
+    pv.AddText('CMS Preliminary Rack {}'.format(n))
+    pv.SetFillStyle(0)
+    pv.SetBorderSize(0)
+    pv.SetTextSize(0.04)
+    pv.Draw()
+
+    fun1 = TF1("fun1","pol1",6000,16000)
+    fit1 = tgr.Fit("fun1","R") # "FQ")
+    offset1 = fun1.GetParameter(0)
+    slope1 = fun1.GetParameter(1)
+
+    l.AddEntry(tgr, 'The p0 value is {0:.6f}'.format(offset1))
+    l.AddEntry(tgr, 'The p1 value is {0:.6f}'.format(slope1))
+
+    l.Draw("a")
+
+    c.SaveAs("rack{}.png".format(n))
+    c.SaveAs("rack{}.pdf".format(n))
+    c.SaveAs("rack{}.C".format(n))
+    return 
+
+
+def create_tgraph(listX, listY):
+  n = len(listX)
+  gr = TGraph(n,listX,listY)
+  gr.SetLineColor( 2 )
+  gr.SetLineWidth( 4 )
+  gr.SetMarkerColor( 6 )
+  gr.SetMarkerStyle( 22 )
+  gr.SetMarkerSize( 1.5 )
+  return gr
+
+
   #ff.Close()
   #rfile.close()
   #quit()
@@ -380,21 +534,34 @@ def main():
   #print rack76gr['RB3'].GetN()
   #print rack76gr['RB4'].GetN()
 
-  merge_tgraph_into_one(rack76gr)
-  merge_tgraph_into_one(rack83gr)
-  merge_tgraph_into_one(rack86gr)
-  merge_tgraph_into_one(rack68gr)
+  ###merge_tgraph_into_one(rack76gr)
+  ###merge_tgraph_into_one(rack83gr)
+  ###merge_tgraph_into_one(rack86gr)
+  ###merge_tgraph_into_one(rack68gr)
   
   #print rack76gr['main'].GetN()
   #print rack83gr['main'].GetN()
   #print rack86gr['main'].GetN()
   #print rack68gr['main'].GetN()
   
-  dbscan_for_tgraph(rack76gr['main'])
-  dbscan_for_tgraph(rack83gr['main'])
-  dbscan_for_tgraph(rack86gr['main'])
-  dbscan_for_tgraph(rack68gr['main'])
+ ### dbscan_for_tgraph(rack76gr['main'])
+ ### dbscan_for_tgraph(rack83gr['main'])
+ ### dbscan_for_tgraph(rack86gr['main'])
+ ### dbscan_for_tgraph(rack68gr['main'])
 
+ ## print rack76gr['main'].GetN()
+ ## print rack76gr['main'].GetX()
+ ## print rack76gr['main'].GetY()
+ ## for e in rack76gr['main'].GetX():
+ ##     print e
+ ## print 'NOW this is Y'
+ ## for e in rack76gr['main'].GetY():
+ ##     print e
+ ## c1 = TCanvas()
+ ## rack76gr['main'].Draw()
+ ## c1.SaveAs('test_rack76.png')
+  
+  
   rateEvalRack76 = printmultigraph(rack76gr, rbsort,    plotoptionsRBs, "rack76", "rack76", year, doext, False, 10.0)
   rateEvalRack83 = printmultigraph(rack83gr, ringsort,  plotoptionsRE1, "rack83", "rack83", year, doext, False, 15.0)
   rateEvalRack86 = printmultigraph(rack86gr, ringsort,  plotoptionsRE1, "rack86", "rack86", year, doext, False, 90.0)
@@ -456,7 +623,7 @@ def dbscan_for_tgraph(v):
   #print 'Lista Y Normalizada'
   #for e in listaY: print e
   zippedXY      = list(map(list,zip(listaX, listaY)))
-  clustering    = DBSCAN(eps=0.125, min_samples=15).fit(zippedXY)
+  clustering    = DBSCAN(eps=0.100, min_samples=13).fit(zippedXY)
   removedPoints = 0
   for i in range(len(clustering.labels_)):
       #print i
@@ -587,6 +754,7 @@ def printmultigraph( grs, sortk, plotoptions, outn, title, year, doext, ploterro
   #canvassettings(c)
   
   mg  = TMultiGraph()
+  #mg  = grs['main']
   mg.SetTitle(title)
   #gStyle.SetTitleAlign(33)
   #gStyle.SetTitleX(0.99)
@@ -738,16 +906,43 @@ def fillgraphs( graphs, rateinfo, lumi, n, r, showErr):
   if not any(graphs):
     for key in rateinfo.keys():
       graphs[key] = TGraphErrors()
-      
-  for key in rateinfo.keys():
-    graphs[key].Set(n+1)
-    graphs[key].SetPoint(n, float(lumi), float(rateinfo[key][0]))
-    xErr = 0.05*float(lumi)
-    yErr = float(rateinfo[key][1])
-    if not showErr:
-      xErr = 0
-      yErr = 0
-    graphs[key].SetPointError(n, xErr, yErr)
+
+  rateValueList    = []
+  rateValueListErr = []
+  for key, value in rateinfo.items():
+      rateNumber = float(value[0])
+      rateValueList.append(rateNumber)
+      rateNumberErr = float(value[1])
+      rateValueListErr.append(rateNumberErr)
+
+      continue
+  rateValue    = sum(rateValueList) / len(rateValueList)
+  ##errSum = []
+  ##for err in rateValueListErr:
+  ##    errSum.append(err*err)
+  rateValueErr = sum(rateValueListErr) / len(rateValueListErr) 
+
+  #print 'Value an Error are'
+  #print rateValue
+  #print rateValueErr
+
+  #graphs['main'] = TGraphErrors()
+  graphs['main'].Set(n+1)
+  graphs['main'].SetPoint(n, float(lumi), float(rateValue))
+  xErr = 0.05*float(lumi)
+  yErr = float(rateValueErr)
+  graphs['main'].SetPointError(n, xErr, yErr)
+
+
+  ####for key in rateinfo.keys():
+  ####  graphs[key].Set(n+1)
+  ####  graphs[key].SetPoint(n, float(lumi), float(rateinfo[key][0]))
+  ####  xErr = 0.05*float(lumi)
+  ####  yErr = float(rateinfo[key][1])
+  ####  if not showErr:
+  ####    xErr = 0
+  ####    yErr = 0
+  ####  graphs[key].SetPointError(n, xErr, yErr)
 #    latex = TLatex(graphs[key].GetX()[n],graphs[key].GetY()[n],str(r))
 #    latex.SetTextSize(0.014)
 #    graphs[key].GetListOfFunctions().Add(latex)

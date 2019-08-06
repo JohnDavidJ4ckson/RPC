@@ -9,7 +9,8 @@ class RPCRateRun(object):
   BARRELs = {1:"RB1in",11:"RB1out",2:"RB2in",21:"RB2out",3:"RB3",4:"RB4"}
   DISKSR = {-4:"RE-4_R2_CH10",-3:"RE-3_R2_CH10",3:"RE+3_R2_CH10",4:"RE+4_R2_CH10"}
   SYSTEM = {"RE-":"RE-","RB":"W","RE+":"RE+"}
-  PATH   = '/Users/dan/detector/RPC/lumiVsRates/TS2_18rates/selRuns18/run' 
+  #PATH   = '/Users/dan/detector/RPC/lumiVsRates/TS2_18rates/selRuns18/run' 
+  PATH   = '/Users/dan/detector/rates/selRuns18/run'
   ROLLS  = 'output_rolls.json'
   STRIPS = 'output_strips.json'
 
@@ -154,6 +155,7 @@ class RPCRateRun(object):
       if station in key and "inf" not in value["ratesquarecm"]: # and "R1" not in key:
         if float(value["ratesquarecm"]) < 0.0001: continue
         allrates.append( [ float(value["ratesquarecm"]),self.errors_[key] ] )
+      #print value
       if len(allrates) > 0:
         for ll in allrates:
           avgrate+=ll[0]
