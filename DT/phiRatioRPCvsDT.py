@@ -10,7 +10,6 @@ from ROOT import gROOT
 from array import array
 from numpy import median
 import numpy as np
-#from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 #import RPCRates
@@ -123,9 +122,11 @@ def divide_rates():
   print "Retrieving RPC info"
   RPC = phiDistroRPC.main()
   print len(RPC)
+  print RPC
   print "Retrieving DT info"
   DT  = generateDTTGraphs.main()
   print len(DT)
+
   ratioLayer1, ratioLayer2, ratioLayer3, ratioLayer4 = array('d'),array('d'),array('d'),array('d')
   ratioList = [ ratioLayer1, ratioLayer2, ratioLayer3, ratioLayer4 ]
   layers = [ 'L1', 'L2', 'L3', 'L4' ]
@@ -134,7 +135,7 @@ def divide_rates():
     for kRPC,vRPC in RPC.items():
       if (kDT[1:3] == kRPC[1:3]) and (kDT[5:7] == kRPC[5:7]) and (kDT[9:11] == kRPC[9:11]):
         name = kDT[:4]+layers[int(kDT[6]) - 1]+kDT[-4:]
-        #print name
+        print name
         ratio = vRPC["rates"]/vDT["rates"]
         if ratio < 0.9: continue
         if ratio > 15: continue
@@ -188,7 +189,7 @@ def main():
     tgraphList = [ grDic[k] for k,v in grDic.items() if w in k]
     create_plots(tgraphList, "Wheel"+w[-2]+w[-1])
   print "DONE"
-
+  return
 
 if __name__ == "__main__":
    main()

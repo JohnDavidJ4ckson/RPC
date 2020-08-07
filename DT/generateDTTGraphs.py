@@ -10,7 +10,6 @@ from ROOT import gROOT
 from array import array
 from numpy import median
 import numpy as np
-from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 #import RPCRates
@@ -323,11 +322,11 @@ def main():
   list0 = the_list()
   #print "Creating the dictionary with the standard names"
   dict0 = the_dictionary(list0)
-  return dict0  ######## Comment this return in order to print all the plots for DT 
+  #return dict0  ######## Comment this return in order to print all the plots for DT 
   #print "Creating the dictionary with TGraph objects"
   dict1 = generate_tgraphs(dict0)
-  #print "Do we really need the plots?"
-  #print dict1
+  print "Do we really need the plots?"
+  print dict1
   print "Creating plots"
 
   wheels = ["W-2", "W-1", "W+0", "W+1", "W+2"]
@@ -335,7 +334,8 @@ def main():
     tgraphList = [ dict1[k] for k,v in dict1.items() if w in k]
     plotDT_phi(tgraphList, "Wheel"+w[-2]+w[-1])
   print "DONE"
-
+  print dict1
+  return dict1
 
 if __name__ == "__main__":
   main()

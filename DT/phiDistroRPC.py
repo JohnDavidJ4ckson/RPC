@@ -10,7 +10,6 @@ from ROOT import gROOT
 from array import array
 from numpy import median
 import numpy as np
-from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 #import RPCRates

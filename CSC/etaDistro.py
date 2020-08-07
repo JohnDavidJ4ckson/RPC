@@ -12,7 +12,6 @@ from array import array
 from numpy import median
 from numpy import isnan
 #import numpy as np
-#from scipy import stats
 import ROOT as rt
 import CMS_lumi, tdrstyle
 import generateDTTGraphs
@@ -858,7 +857,8 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   pvtxt9.SetTextSize(0.03)
   pvtxt9.Draw()
 
-  canv.SaveAs("etaDistro.gif")
+  canv.SaveAs("plots/etaDistro.png")
+  canv.SaveAs("plots/etaDistro.pdf")
   canv.Close()
 
   print "----- Creating Second TCanvas -----"
@@ -924,7 +924,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legenda.SetTextSize(0.05)
   legenda.Draw("a");
 
-  c.SaveAs("etaDistroDetailRB1.png")
+  c.SaveAs("plots/etaDistroDetailRB1.png")
   c.Close()
 
   print "----- Creating Second TCanvas -----"
@@ -988,7 +988,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legendd2.SetTextSize(0.05)
   legendd2.Draw("a");
 
-  c1.SaveAs("etaDistroDetailRB2.png")
+  c1.SaveAs("plots/etaDistroDetailRB2.png")
   c1.Close() 
 
   print "----- Creating Third TCanvas -----"
@@ -1061,7 +1061,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legendd3.SetTextSize(0.05)
   legendd3.Draw("a");
 
-  c3.SaveAs("etaDistroDetailRB2withDT.png")
+  c3.SaveAs("plots/etaDistroDetailRB2withDT.png")
   c3.Close()
 
   print "----- Creating Fourth TCanvas -----"
@@ -1126,7 +1126,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legendd4.SetTextSize(0.05)
   legendd4.Draw("a");
 
-  c4.SaveAs("etaDistroDetailRB3withDT.png")
+  c4.SaveAs("plots/etaDistroDetailRB3withDT.png")
   c4.Close()
 
   print "----- Creating Fifth TCanvas -----"
@@ -1191,7 +1191,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legendd5.SetTextSize(0.05)
   legendd5.Draw("a");
 
-  c5.SaveAs("etaDistroDetailRB4withDT.png")
+  c5.SaveAs("plots/etaDistroDetailRB4withDT.png")
   c5.Close()
 
   print "----- Creating Sixth TCanvas -----"
@@ -1265,7 +1265,7 @@ def eta_plot(X0W,Y0W,X1W,Y1W,X2W,Y2W,X3W, Y3W, X4W, Y4W, X5W, Y5W, X6W, Y6W,
   legendd6.SetTextSize(0.05)
   legendd6.Draw("a");
 
-  c6.SaveAs("etaDistroDetailRB1withDT.png")
+  c6.SaveAs("plots/etaDistroDetailRB1withDT.png")
   c6.Close()
 
   
